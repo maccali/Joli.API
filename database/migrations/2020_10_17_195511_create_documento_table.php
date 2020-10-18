@@ -16,7 +16,7 @@ class CreateDocumentoTable extends Migration
         Schema::create('documento', function (Blueprint $table) {
             $table->increments('codigo');
             $table->string('tipo', 75);
-			$table->string('nome', 100);\
+			$table->string('nome', 100);
 			$table->string('documento', 200);
 			$table->timestamp('upload', 0);
 			$table->integer('cod_processo')->referencas('codigo')->on('processo');
