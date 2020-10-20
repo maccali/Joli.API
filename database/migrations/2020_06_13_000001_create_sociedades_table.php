@@ -4,19 +4,18 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUsersTable extends Migration {
+class CreateSociedadesTable extends Migration {
     /**
      * Run the migrations.
      *
      * @return void
      */
     public function up() {
-        Schema::create('sec_users', function (Blueprint $table) {
-            $table->increments('userId');
+        Schema::create('sec_sociedades', function (Blueprint $table) {
+            $table->increments('sociedadeId');
             $table->string('name');
-            $table->string('email');
-            $table->string('password');
-            $table->json('sociedade');
+            $table->string('description');
+            $table->json('list');
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ class CreateUsersTable extends Migration {
      * @return void
      */
     public function down() {
-        Schema::dropIfExists('sec_users');
+        Schema::dropIfExists('sec_sociedades');
     }
 }

@@ -14,11 +14,15 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'password',
+        'sociedade'
     ];
     protected $hidden = [
-        'senha',
+        'password',
     ];
 
+    protected $casts = [
+      'sociedade' => 'array'
+    ];
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
