@@ -17,6 +17,7 @@ class CreateSociedadesTable extends Migration {
             $table->string('description');
             $table->json('list');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

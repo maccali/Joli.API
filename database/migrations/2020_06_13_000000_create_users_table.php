@@ -18,6 +18,7 @@ class CreateUsersTable extends Migration {
             $table->string('password');
             $table->json('sociedade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
