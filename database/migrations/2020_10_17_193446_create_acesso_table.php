@@ -18,7 +18,8 @@ class CreateAcessoTable extends Migration
 			$table->timestamp('time', 0);
 			$table->string('ip', 15);
 			$table->string('feito', 250);
-			$table->integer('cod_funcionario')->references('codigo')->on('funcionario');
+            $table->integer('cod_funcionario')->references('codigo')->on('funcionario');
+            //$table->foreignId('cod_funcionario')->constrained('funcionario');
         });
     }
 
