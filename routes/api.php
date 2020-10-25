@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::group(['middleware' => ['apiJwt']], function () {
+Route::group(['middleware' => ['apiJwt', 'log']], function () {
 
     // USER ROUTES
     Route::get('users', 'Api\UserController@index');

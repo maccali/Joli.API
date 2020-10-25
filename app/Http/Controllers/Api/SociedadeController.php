@@ -105,21 +105,20 @@ class SociedadeController extends Controller
 
   public function delete($nome)
   {
+      $sociedadeParaChecagem = Sociedade::where('name', $nome)->first();
 
-    $sociedadeParaChecagem = Sociedade::where('name', $nome)->first();
+      if(!$sociedadeParaChecagem){
+        return response()->json([
+          "Sociedade Não Encontrada"
+        ], 404);
+      }
 
-    if(!$sociedadeParaChecagem){
-      return response()->json([
-        "Sociedade Não Encontrada"
-      ], 404);
-    }
+      Sociedade::where('name', $nome)->delete();
 
-    Sociedade::where('name', $nome)->delete();
-
-    return  response()->json([
-      'message'=> 'Excluida com Sucesso',
-      'sociedade' => $sociedadeParaChecagem,
-    ]);
+      return  response()->json([
+        'message'=> 'Excluida com Sucesso',
+        'sociedade' => $sociedadeParaChecagem,
+        ]);
 
   }
 }
