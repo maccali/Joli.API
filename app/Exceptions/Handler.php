@@ -41,7 +41,7 @@ class Handler extends ExceptionHandler
         $date = new DateTime();
         $time = date('d-m-Y', strtotime($date->getTimestamp())); 
         // insert error to DB -> error_logs
-        DB::insert('insert into error_logs()
+        DB::insert('insert into error_logs(time, log, error)
                     values(?, ?, ?)', [$time, $exception->gettype, $exception->getMessage()]);
         parent::report($exception);
     }
