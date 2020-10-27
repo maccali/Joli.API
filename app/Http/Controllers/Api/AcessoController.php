@@ -6,9 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Acesso;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
 
 class AcessoController extends Controller
 {
+    
     /**
      * Display a listing of the resource.
      *
@@ -39,7 +42,7 @@ class AcessoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function showId($id)
+    public function showIdFuncionario($id)
     {
         $pessoa = DB::select('select * from acessos 
                               where funcionarioId = ?', [$id]);

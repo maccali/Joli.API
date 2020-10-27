@@ -41,7 +41,7 @@ class DocumentoProcessualController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function showId($id)
+    public function showIdProcesso($id)
     {
         $pessoa = DB::select('select * from documentos_processuais 
                               where documentoPrecessualId = ?', [$id]);
