@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::group(['middleware' => ['apiJwt']], function () {
+Route::group(['middleware' => ['audit', 'apiJwt']], function () {
 
     // USER ROUTES
     Route::get('users', 'Api\UserController@index');
@@ -44,8 +44,9 @@ Route::group(['middleware' => ['apiJwt']], function () {
     Route::delete('costumes/{nome}', 'Api\CostumeController@delete');
 });
 
-
-Route::post('auth/login', 'Api\AuthController@login');
+Route::group(['middleware' => ['audit']], function () {
+  Route::post('auth/login', 'Api\AuthController@login');
+});
 // Route::post('logout', 'AuthController@logout');
 // Route::post('refresh', 'AuthController@refresh');
 // Route::post('me', 'AuthController@me');
