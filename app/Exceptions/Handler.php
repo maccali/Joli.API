@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Models\ErroLog;
 use DateTime;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Facades\DB;
@@ -41,8 +42,12 @@ class Handler extends ExceptionHandler
         $date = new DateTime();
         $time = date('d-m-Y', strtotime($date->getTimestamp())); 
         // insert error to DB -> error_logs
-        DB::insert('insert into error_logs(time, log, error)
-                    values(?, ?, ?)', [$time, $exception->gettype, $exception->getMessage()]);
+        $erro = new ErroLog();
+        $erro['time'] = $time;
+        $erro['log'] = $exception->gettype;
+        $erro['error'] = $exception->getMessage();
+        $erro->save();
+
         parent::report($exception);
     }
 

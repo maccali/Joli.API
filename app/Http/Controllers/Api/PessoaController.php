@@ -45,7 +45,7 @@ class PessoaController extends Controller
      */
     public function showName($name)
     {
-        $pessoa = DB::select('select * from pessoas where nome = ?', [$name]);
+        $pessoa = DB::select('select * from pessoa where nome = ?', [$name]);
 
         return response()->json($pessoa);
     }
@@ -62,7 +62,7 @@ class PessoaController extends Controller
         $pessoa->pessoa = $request->pessoa;
         $pessoa->save();
 
-        $id = DB::select('select max(pessoaId) from pessoas');
+        $id = DB::select('select max(codigo) from pessoa');
 
         return response()->json($pessoa);
     }
@@ -79,16 +79,45 @@ class PessoaController extends Controller
         $pessoa->pessoa = $request->pessoa;
         $pessoa->save();
 
-        $id = DB::select('select max(pessoaId) from pessoas');
+        $id = DB::select('select max(codigo) from pessoa');
 
         $pessoaf = new PessoaFisica;
         $pessoaf->pessoa = $request->pessoa;
-        $pessoaf->setAttribute('fisicaId', $id);
+        $pessoaf['fisicaId'] = $id;
         $pessoaf->save();
 
         $pessoac = new Cliente;
         $pessoac->cliente = $request->cliente;
-        $pessoac->setAttribute('juridicaId', $id);
+        $pessoac['fisicaId'] = $id;
+        $pessoac['juridicaId'] = 0;
+        $pessoac->save();
+
+        return response()->json([$pessoa, $pessoaf, $pessoac]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function storeJuridicaCliente(Request $request)
+    {
+        $pessoa = new Pessoa;
+        $pessoa->pessoa = $request->pessoa;
+        $pessoa->save();
+
+        $id = DB::select('select max(codigo) from pessoa');
+
+        $pessoaf = new PessoaFisica;
+        $pessoaf->pessoaf = $request->pessoaf;
+        $pessoaf['fisicaId'] = $id;
+        $pessoaf->save();
+
+        $pessoac = new Cliente;
+        $pessoac->cliente = $request->cliente;
+        $pessoac['fisicaId'] = 0;
+        $pessoac['juridicaId'] = $id;
         $pessoac->save();
 
         return response()->json([$pessoa, $pessoaf, $pessoac]);
@@ -106,7 +135,7 @@ class PessoaController extends Controller
         $pessoa->pessoa = $request->pessoa;
         $pessoa->save();
 
-        $id = DB::select('select max(pessoaId) from pessoas');
+        $id = DB::select('select max(codigo) from pessoa');
 
         $pessoaf = new PessoaFisica;
         $pessoaf->pessoaFisica = $request->pessoaFisica;
@@ -121,32 +150,7 @@ class PessoaController extends Controller
         return response()->json([$pessoa, $pessoaf, $pessoac]);
     }
 
-            /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function storeJuridica(Request $request)
-    {
-        $pessoa = new Pessoa;
-        $pessoa->pessoa = $request->pessoa;
-        $pessoa->save();
-
-        $id = DB::select('select max(pessoaId) from pessoas');
-
-        $pessoaj = new PessoaJuridica;
-        $pessoaj->pessoa = $request->pessoa;
-        $pessoaj->setAttribute('juridicaId', $id);
-        $pessoaj->save();
-
-        $pessoac = new Cliente;
-        $pessoac->cliente = $request->cliente;
-        $pessoac->setAttribute('juridicaId', $id);
-        $pessoac->save();
-
-        return response()->json([$pessoa, $pessoaj, $pessoac]);
-    }
+            
 
     /**
      * Update the specified resource in storage.
@@ -162,9 +166,80 @@ class PessoaController extends Controller
 
         $pessoa->pessoa = $request->pessoa;
 
-        $pessoa->save();
+        $pessoa->update();
 
         return response()->json([$antes, $pessoa]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function updateFisicaCliente(Request $request, $id)
+    {
+        $pessoa = Pessoa::find($id);
+        $antes = $pessoa;
+        $pessoa->pessoa = $request->pessoa;
+        $pessoa->update();
+
+        $pessoaf = PessoaFisica::find($id);
+        $antesf = $pessoa;
+        $pessoaf->pessoa = $request->pessoa;
+        $pessoaf->update();
+
+        return response()->json([$antes, $pessoa, $antesf, $pessoaf]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function updateJuridicaCliente(Request $request, $id)
+    {
+        $pessoa = Pessoa::find($id);
+        $antes = $pessoa;
+        $pessoa->pessoa = $request->pessoa;
+        $pessoa->update();
+
+        $pessoaf = PessoaJuridica::find($id);
+        $antesf = $pessoa;
+        $pessoaf->pessoa = $request->pessoa;
+        $pessoaf->update();
+
+        return response()->json([$antes, $pessoa, $antesf, $pessoaf]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function updateFisicaFuncionario(Request $request, $id)
+    {
+        $pessoa = Pessoa::find($id);
+        $antes = $pessoa;
+        $pessoa->pessoa = $request->pessoa;
+        $pessoa->update();
+
+        $pessoaf = PessoaFisica::find($id);
+        $antesf = $pessoaf;
+        $pessoaf->pessoa = $request->pessoaf;
+        $pessoaf->update();
+
+        $pessoau = Funcionario::find('cod_fisica', $id);
+        $antesu = $pessoau;
+        $pessoau->pessoa = $request->pessoau;
+        $pessoau->update();
+
+        return response()->json([$antes, $pessoa, $antesf, $pessoaf]);
     }
 
     /**
@@ -175,8 +250,53 @@ class PessoaController extends Controller
      */
     public function destroy($id)
     {
-        $pessoa = DB::delete('delete from pessoas where pessoaId = ?', [$id]);
+        $pessoa = DB::delete('delete from pessoa where codigo = ?', [$id]);
 
         return response()->json([$pessoa]);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroyFisicaCliente($id)
+    {
+        $pessoa1 = DB::delete('delete from cliente where cod_fisica = ?', [$id]);
+        $pessoa2 = DB::delete('delete from fisica where cod_pessoa = ?', [$id]);
+        $pessoa3 = DB::delete('delete from pessoa where codigo = ?', [$id]);
+
+        return response()->json([$pessoa1, $pessoa2, $pessoa3]);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroyJuridicaCliente($id)
+    {
+        $pessoa1 = DB::delete('delete from cliente where cod_juridica = ?', [$id]);
+        $pessoa2 = DB::delete('delete from juridica where cod_pessoa = ?', [$id]);
+        $pessoa3 = DB::delete('delete from pessoa where codigo = ?', [$id]);
+
+        return response()->json([$pessoa1, $pessoa2, $pessoa3]);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroyFisicaFuncionario($id)
+    {
+        $pessoa1 = DB::delete('delete from funcionario where cod_fisica = ?', [$id]);
+        $pessoa2 = DB::delete('delete from fisica where cod_pessoa = ?', [$id]);
+        $pessoa3 = DB::delete('delete from pessoa where codigo = ?', [$id]);
+
+        return response()->json([$pessoa1, $pessoa2, $pessoa3]);
     }
 }

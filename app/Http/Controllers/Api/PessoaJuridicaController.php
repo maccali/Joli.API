@@ -42,8 +42,8 @@ class PessoaJuridicaController extends Controller
      */
     public function showName($name)
     {
-        $pessoa = DB::select('select * from juridicas f, pessoas p 
-                              where f.juridicaId = p.pessoaId 
+        $pessoa = DB::select('select * from juridica f, pessoa p 
+                              where f.cod_pessoa = p.codigo 
                               and p.nome = ?', [$name]);
 
         return response()->json($pessoa);
@@ -57,7 +57,7 @@ class PessoaJuridicaController extends Controller
      */
     public function store(Request $request)
     {
-        $id = DB::select('select max(pessoaId) from pessoas');
+        $id = DB::select('select max(codigo) from pessoa');
         $pessoa = new PessoaJuridica;
         $pessoa->juridica = $request->juridica;
         $pessoa->setAttribute('juridicaId', $id);
@@ -74,7 +74,7 @@ class PessoaJuridicaController extends Controller
      */
     public function storeCliente(Request $request)
     {
-        $id = DB::select('select max(pessoaId) from pessoas');
+        $id = DB::select('select max(codigo) from pessoa');
         $pessoa = new PessoaJuridica;
         $pessoa->pessoaJuridica = $request->pessoaJuridica;
         $pessoa->setAttribute('juridicaId', $id);
@@ -102,7 +102,7 @@ class PessoaJuridicaController extends Controller
 
         $pessoa->juridica = $request->juridica;
 
-        $pessoa->save();
+        $pessoa->update();
 
         return response()->json([$antes, $pessoa]);
     }
@@ -115,7 +115,7 @@ class PessoaJuridicaController extends Controller
      */
     public function destroy($id)
     {
-        $pessoa = DB::delete('delete from juridicas where juridicaId = ?', [$id]);
+        $pessoa = DB::delete('delete from juridica where cod_pessoa = ?', [$id]);
 
         return response()->json([$pessoa]);
     }

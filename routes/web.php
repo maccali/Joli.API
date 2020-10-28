@@ -61,6 +61,9 @@ Route::get('acesso/{date}','AcessoController@showDate');
 
 //POST ROUTES FOR CONTROLLERS
 Route::post('pessoa','PessoaController@store');
+Route::post('pessoa/fisica/cliente','PessoaController@storeFisicaCliente');
+Route::post('pessoa/juridica/cliente','PessoaController@storeJuridicaCliente');
+Route::post('pessoa/fisica/funcionario','PessoaController@storeFisicaFuncionario');
 Route::post('fisica','PessoaFisicaController@store');
 Route::post('juridica','PessoaJuridicaController@store');
 Route::post('cliente','ClienteController@store');
@@ -75,6 +78,9 @@ Route::post('acesso','AcessoController@store');
 
 //PUT ROUTES FOR CONTROLLERS
 Route::put('pessoa/{id}','PessoaController@update');
+Route::put('pessoa/fisica/cliente/{id}','PessoaController@updateFisicaCliente');
+Route::put('pessoa/juridica/cliente/{id}','PessoaController@updateJuridicaCliente');
+Route::put('pessoa/fisica/funcionario/{id}','PessoaController@updateFisicaFuncionario');
 Route::put('fisica/{id}','PessoaFisicaController@update');
 Route::put('juridica/{id}','PessoaJuridicaController@update');
 Route::put('cliente/{id}','ClienteController@update');
@@ -88,6 +94,9 @@ Route::put('acesso/{id}','AcessoController@update');
 
 //DELETE ROUTES FOR CONTROLLERS
 Route::delete('pessoa/{id}','PessoaController@destroy');
+Route::delete('pessoa/fisica/cliente/{id}','PessoaController@destroyFisicaCliente');
+Route::delete('pessoa/juridica/cliente/{id}','PessoaController@destroyJuridicaCliente');
+Route::delete('pessoa/fisica/funcionario/{id}','PessoaController@destroyFisicaFuncionario');
 Route::delete('fisica/{id}','PessoaFisicaController@destroy');
 Route::delete('juridica/{id}','PessoaJuridicaController@destroy');
 Route::delete('cliente/{id}','ClienteController@destroy');

@@ -43,8 +43,8 @@ class DocumentoProcessualController extends Controller
      */
     public function showIdProcesso($id)
     {
-        $pessoa = DB::select('select * from documentos_processuais 
-                              where documentoPrecessualId = ?', [$id]);
+        $pessoa = DB::select('select * from documentos_processual 
+                              where codigo = ?', [$id]);
 
         return response()->json($pessoa);
     }
@@ -57,7 +57,7 @@ class DocumentoProcessualController extends Controller
      */
     public function showDate($date)
     {
-        $pessoa = DB::select('select * from documentos_processuais 
+        $pessoa = DB::select('select * from documentos_processual 
                               where upload = ?', [$date]);
 
         return response()->json($pessoa);
@@ -71,7 +71,7 @@ class DocumentoProcessualController extends Controller
      */
     public function showDates($date1, $date2)
     {
-        $pessoa = DB::select('select * from documentos_processuais 
+        $pessoa = DB::select('select * from documentos_processual 
                               where upload between ? and ?', [$date1, $date2]);
 
         return response()->json($pessoa);
@@ -116,7 +116,7 @@ class DocumentoProcessualController extends Controller
         Storage::put($path, $request->files());
         $pessoa['processo'] = $path;
 
-        $pessoa->save();
+        $pessoa->update();
 
         return response()->json([$antes, $pessoa]);
     }
@@ -129,9 +129,9 @@ class DocumentoProcessualController extends Controller
      */
     public function destroy($id)
     {
-        $pessoa = DB::select('select processo from documentos_processuais where documentoId = ?', [$id]);
+        $pessoa = DB::select('select processo from documentos_processual where codigo = ?', [$id]);
         Storage::delete($pessoa);
-        $pessoa = DB::delete('delete from documentos_processuais where documentoId = ?', [$id]);
+        $pessoa = DB::delete('delete from documentos_processual where codigo = ?', [$id]);
 
         return response()->json([$pessoa]);
     }

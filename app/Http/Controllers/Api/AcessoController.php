@@ -72,7 +72,7 @@ class AcessoController extends Controller
      */
     public function showDates($date1, $date2)
     {
-        $pessoa = DB::select('select * from acessos 
+        $pessoa = DB::select('select * from acesso 
                               where time between ? and ?', [$date1, $date2]);
 
         return response()->json($pessoa);
@@ -107,7 +107,7 @@ class AcessoController extends Controller
 
         $pessoa->acesso = $request->acesso;
 
-        $pessoa->save();
+        $pessoa->update();
 
         return response()->json([$antes, $pessoa]);
     }
@@ -120,7 +120,7 @@ class AcessoController extends Controller
      */
     public function destroy($id)
     {
-        $pessoa = DB::delete('delete from acessos where acessoId = ?', [$id]);
+        $pessoa = DB::delete('delete from acesso where codigo = ?', [$id]);
 
         return response()->json([$pessoa]);
     }

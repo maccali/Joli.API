@@ -43,8 +43,8 @@ class DocumentoController extends Controller
      */
     public function showIdProcesso($id)
     {
-        $pessoa = DB::select('select * from documentos 
-                              where processoId = ?', [$id]);
+        $pessoa = DB::select('select * from documento 
+                              where cod_processo = ?', [$id]);
 
         return response()->json($pessoa);
     }
@@ -57,7 +57,7 @@ class DocumentoController extends Controller
      */
     public function showDate($date)
     {
-        $pessoa = DB::select('select * from documentos 
+        $pessoa = DB::select('select * from documento 
                               where upload = ?', [$date]);
 
         return response()->json($pessoa);
@@ -71,7 +71,7 @@ class DocumentoController extends Controller
      */
     public function showDates($date1, $date2)
     {
-        $pessoa = DB::select('select * from documentos 
+        $pessoa = DB::select('select * from documento 
                               where upload between ? and ?', [$date1, $date2]);
 
         return response()->json($pessoa);
@@ -117,7 +117,7 @@ class DocumentoController extends Controller
         $file = Storage::put($path, $request->files());
         $pessoa['documento'] = $path;
 
-        $pessoa->save();
+        $pessoa->update();
 
         return response()->json([$antes, $pessoa]);
     }
@@ -130,9 +130,9 @@ class DocumentoController extends Controller
      */
     public function destroy($id)
     {
-        $pessoa = DB::select('select documento from documentos where documentoId = ?', [$id]);
+        $pessoa = DB::select('select documento from documento where codigo = ?', [$id]);
         Storage::delete($pessoa);
-        $pessoa = DB::delete('delete from docuemntos where documentoId = ?', [$id]);
+        $pessoa = DB::delete('delete from docuemnto where codigo = ?', [$id]);
 
         return response()->json([$pessoa]);
     }

@@ -42,9 +42,9 @@ class FuncionarioController extends Controller
      */
     public function showName($name)
     {
-        $pessoa = DB::select('select * from fisicas f, pessoas p, funcionarios u 
-                              where f.fisicaId = p.pessoaId 
-                              and u.fisicaId = f.fisicaId 
+        $pessoa = DB::select('select * from fisica f, pessoa p, funcionario u 
+                              where f.cod_pessoa = p.codigo 
+                              and u.cod_fisica = f.cod_pessoa 
                               and p.nome = ?', [$name]);
 
         return response()->json($pessoa);
@@ -58,7 +58,8 @@ class FuncionarioController extends Controller
      */
     public function storeFuncionario(Request $request)
     {
-        $id = DB::select('select max(pessoaId) from pessoas');
+        $id = DB::select('select max(codigo) from pessoa');
+        $id++;
         $pessoa = new PessoaFisica;
         $pessoa->pessoaFisica = $request->pessoaFisica;
         $pessoa['fisicaId'] = $id;
@@ -80,7 +81,7 @@ class FuncionarioController extends Controller
      */
     public function store(Request $request)
     {
-        $id = DB::select('select max(pessoaId) from pessoas');
+        $id = DB::select('select max(codigo) from pessoa');
         $pessoaj = new Funcionario;
         $pessoaj->funcionario = $request->funcionario;
         $pessoaj->setAttribute('fisicaId', $id);
@@ -103,7 +104,7 @@ class FuncionarioController extends Controller
 
         $pessoa->funcionario = $request->funcionario;
 
-        $pessoa->save();
+        $pessoa->update();
 
         return response()->json([$antes, $pessoa]);
     }
@@ -116,7 +117,7 @@ class FuncionarioController extends Controller
      */
     public function destroy($id)
     {
-        $pessoa = DB::delete('delete from funcionarios where funcionarioId = ?', [$id]);
+        $pessoa = DB::delete('delete from funcionario where cod_fisica = ?', [$id]);
 
         return response()->json([$pessoa]);
     }

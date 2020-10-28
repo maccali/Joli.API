@@ -41,10 +41,10 @@ class HistoricoController extends Controller
      */
     public function showIdProcesso($id)
     {
-        $pessoa = DB::select('select h.historicoId, h.fase, h.data 
-                              from historicos h, processos p 
-                              where p.historicoId = h.historicoId 
-                              and p.historicoId = ?', [$id]);
+        $pessoa = DB::select('select h.codigo, h.fase, h.data 
+                              from historico h, processo p 
+                              where p.codigo = h.cod_processo 
+                              and p.codigo = ?', [$id]);
 
         return response()->json($pessoa);
     }
@@ -57,7 +57,7 @@ class HistoricoController extends Controller
      */
     public function showDate($date)
     {
-        $pessoa = DB::select('select * from historicos 
+        $pessoa = DB::select('select * from historico 
                               where data = ?', [$date]);
 
         return response()->json($pessoa);
@@ -71,7 +71,7 @@ class HistoricoController extends Controller
      */
     public function showDates($date1, $date2)
     {
-        $pessoa = DB::select('select * from historicos 
+        $pessoa = DB::select('select * from historico 
                               where data between ? and ?', [$date1, $date2]);
 
         return response()->json($pessoa);
@@ -106,7 +106,7 @@ class HistoricoController extends Controller
 
         $pessoa->historico = $request->historico;
 
-        $pessoa->save();
+        $pessoa->update();
 
         return response()->json([$antes, $pessoa]);
     }
@@ -119,7 +119,7 @@ class HistoricoController extends Controller
      */
     public function destroy($id)
     {
-        $pessoa = DB::delete('delete from historicos where historicoId = ?', [$id]);
+        $pessoa = DB::delete('delete from historico where codigo = ?', [$id]);
 
         return response()->json([$pessoa]);
     }

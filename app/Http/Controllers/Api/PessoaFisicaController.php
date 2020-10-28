@@ -43,8 +43,8 @@ class PessoaFisicaController extends Controller
      */
     public function showName($name)
     {
-        $pessoa = DB::select('select * from fisicas f, pessoas p 
-                              where f.fisicaId = p.pessoaId 
+        $pessoa = DB::select('select * from fisica f, pessoa p 
+                              where f.cod_pessoa = p.codigo 
                               and p.nome = ?', [$name]);
 
         return response()->json($pessoa);
@@ -58,7 +58,7 @@ class PessoaFisicaController extends Controller
      */
     public function store(Request $request)
     {
-        $id = DB::select('select max(pessoaId) from pessoas');
+        $id = DB::select('select max(codigo) from pessoa');
         $pessoa = new PessoaFisica;
         $pessoa->pessoa = $request->pessoa;
         $pessoa->setAttribute('fisicaId', $id);
@@ -75,7 +75,7 @@ class PessoaFisicaController extends Controller
      */
     public function storeCliente(Request $request)
     {
-        $id = DB::select('select max(pessoaId) from pessoas');
+        $id = DB::select('select max(codigo) from pessoa');
         $pessoa = new PessoaFisica;
         $pessoa->pessoaFisica = $request->pessoaFisica;
         $pessoa->setAttribute('fisicaId', $id);
@@ -97,7 +97,7 @@ class PessoaFisicaController extends Controller
      */
     public function storeFuncionario(Request $request)
     {
-        $id = DB::select('select max(pessoaId) from pessoas');
+        $id = DB::select('select max(codigo) from pessoa');
         $pessoa = new PessoaFisica;
         $pessoa->fisica = $request->fisica;
         $pessoa->setAttribute('fisicaId', $id);
@@ -125,7 +125,7 @@ class PessoaFisicaController extends Controller
 
         $pessoa->fisica = $request->fisica;
 
-        $pessoa->save();
+        $pessoa->update();
 
         return response()->json([$antes, $pessoa]);
     }
@@ -138,7 +138,7 @@ class PessoaFisicaController extends Controller
      */
     public function destroy($id)
     {
-        $pessoa = DB::delete('delete from fisicas where fisicaId = ?', [$id]);
+        $pessoa = DB::delete('delete from fisica where cod_pessoa = ?', [$id]);
 
         return response()->json([$pessoa]);
     }
