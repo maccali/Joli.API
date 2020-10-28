@@ -9,8 +9,17 @@ use Validator;
 
 class CostumeController extends Controller
 {
-  public function index()
+  public function index(Request $request)
   {
+
+    $sociedadesUsuario = $request->all()['user']['sociedade'];
+
+    if (!in_array('administrador', $sociedadesUsuario)) {
+      return response()->json([
+        "Você não tem acesso aqui"
+      ], 401);
+    }
+
       $costumes = Costume::all();
 
       return response()->json($costumes);
@@ -18,6 +27,14 @@ class CostumeController extends Controller
 
   public function store(Request $request)
   {
+
+    $sociedadesUsuario = $request->all()['user']['sociedade'];
+
+    if (!in_array('administrador', $sociedadesUsuario)) {
+      return response()->json([
+        "Você não tem acesso aqui"
+      ], 401);
+    }
 
     $data = json_decode($request->getContent(), true);
 
@@ -46,8 +63,17 @@ class CostumeController extends Controller
     return response()->json($costume);
   }
 
-  public function show($nome)
+  public function show(Request $request, $nome)
   {
+
+    $sociedadesUsuario = $request->all()['user']['sociedade'];
+
+    if (!in_array('administrador', $sociedadesUsuario)) {
+      return response()->json([
+        "Você não tem acesso aqui"
+      ], 401);
+    }
+
     $costume = Costume::where('name', $nome)->first();
 
     if(!$costume){
@@ -61,6 +87,14 @@ class CostumeController extends Controller
 
   public function update(Request $request, $nome)
   {
+
+    $sociedadesUsuario = $request->all()['user']['sociedade'];
+
+    if (!in_array('administrador', $sociedadesUsuario)) {
+      return response()->json([
+        "Você não tem acesso aqui"
+      ], 401);
+    }
 
     $data = json_decode($request->getContent(), true);
 
@@ -102,8 +136,16 @@ class CostumeController extends Controller
 
   }
 
-  public function delete($nome)
+  public function delete(Request $request, $nome)
   {
+
+    $sociedadesUsuario = $request->all()['user']['sociedade'];
+
+    if (!in_array('administrador', $sociedadesUsuario)) {
+      return response()->json([
+        "Você não tem acesso aqui"
+      ], 401);
+    }
 
     $costumesParaChecagem = Costume::where('name', $nome)->first();
 

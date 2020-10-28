@@ -13,11 +13,18 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::all();
+        $sociedadesUsuario = $request->all()['user']['sociedade'];
 
-        return response()->json($users);
+        if(in_array('administrador', $sociedadesUsuario)){
+          $users = User::all();
+          return response()->json($users);
+        }else{
+          return response()->json([
+            "Você não tem acesso aqui"
+          ], 401);
+        }
     }
 
     /**
@@ -28,6 +35,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+      $sociedadesUsuario = $request->all()['user']['sociedade'];
         //
     }
 
@@ -37,11 +45,19 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
+      $sociedadesUsuario = $request->all()['user']['sociedade'];
+
+      if(in_array('administrador', $sociedadesUsuario)){
         $user = User::find($id);
 
         return response()->json($user);
+      }else{
+        return response()->json([
+          "Você não tem acesso aqui"
+        ], 401);
+      }
     }
 
     /**
@@ -53,7 +69,15 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+      $sociedadesUsuario = $request->all()['user']['sociedade'];
+
+      if(in_array('administrador', $sociedadesUsuario)){
+
+      }else{
+        return response()->json([
+          "Você não tem acesso aqui"
+        ], 401);
+      }
     }
 
     /**
@@ -62,8 +86,17 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+      $sociedadesUsuario = $request->all()['user']['sociedade'];
+
+      if(in_array('administrador', $sociedadesUsuario)){
+
+      }else{
+        return response()->json([
+          "Você não tem acesso aqui"
+        ], 401);
+      }
         //
     }
 }

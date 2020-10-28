@@ -9,33 +9,47 @@ use Validator;
 
 class SociedadeController extends Controller
 {
-  public function index()
+  public function index(Request $request)
   {
-      $sociedades = Sociedade::all();
+    $sociedadesUsuario = $request->all()['user']['sociedade'];
 
-      return response()->json($sociedades);
+    if (!in_array('administrador', $sociedadesUsuario)) {
+      return response()->json([
+        "Você não tem acesso aqui"
+      ], 401);
+    }
+
+    $sociedades = Sociedade::all();
+    return response()->json($sociedades);
   }
 
   public function store(Request $request)
   {
+    $sociedadesUsuario = $request->all()['user']['sociedade'];
+
+    if (!in_array('administrador', $sociedadesUsuario)) {
+      return response()->json([
+        "Você não tem acesso aqui"
+      ], 401);
+    }
 
     $data = json_decode($request->getContent(), true);
 
     $validator = Validator::make(
-      $data ,
+      $data,
       [
         'name' => 'required',
       ]
     );
 
-    if ($validator->fails()){
+    if ($validator->fails()) {
       $messages = $validator->messages();
       return response()->json([$messages], 400);
     }
 
     $sociedade = Sociedade::where('name', $data['name'])->first();
 
-    if($sociedade){
+    if ($sociedade) {
       return response()->json([
         "Sociedade Já existente"
       ], 400);
@@ -46,11 +60,20 @@ class SociedadeController extends Controller
     return response()->json($sociedade);
   }
 
-  public function show($nome)
+  public function show(Request $request, $nome)
   {
+
+    $sociedadesUsuario = $request->all()['user']['sociedade'];
+
+    if (!in_array('administrador', $sociedadesUsuario)) {
+      return response()->json([
+        "Você não tem acesso aqui"
+      ], 401);
+    }
+
     $sociedade = Sociedade::where('name', $nome)->first();
 
-    if(!$sociedade){
+    if (!$sociedade) {
       return response()->json([
         "Sociedade Não Existe"
       ], 404);
@@ -62,23 +85,32 @@ class SociedadeController extends Controller
   public function update(Request $request, $nome)
   {
 
+    $sociedadesUsuario = $request->all()['user']['sociedade'];
+
+    if (!in_array('administrador', $sociedadesUsuario)) {
+      return response()->json([
+        "Você não tem acesso aqui"
+      ], 401);
+    }
+
+
     $data = json_decode($request->getContent(), true);
 
     $validator = Validator::make(
-      $data ,
+      $data,
       [
         'name' => 'required',
       ]
     );
 
-    if ($validator->fails()){
+    if ($validator->fails()) {
       $messages = $validator->messages();
       return response()->json([$messages], 400);
     }
 
     $sociedade = Sociedade::where('name', $nome)->first();
 
-    if(!$sociedade){
+    if (!$sociedade) {
       return response()->json([
         "Sociedade Não Encontrada"
       ], 404);
@@ -86,8 +118,8 @@ class SociedadeController extends Controller
 
     $sociedadeParaChecagem = Sociedade::where('name', $data['name'])->first();
 
-    if($sociedadeParaChecagem){
-      if($data['name'] !==$nome ){
+    if ($sociedadeParaChecagem) {
+      if ($data['name'] !== $nome) {
         return response()->json([
           "Sociedade Já Existente"
         ], 400);
@@ -100,25 +132,31 @@ class SociedadeController extends Controller
     $sociedade->save();
 
     return response()->json($data);
-
   }
 
-  public function delete($nome)
+  public function delete(Request $request, $nome)
   {
-      $sociedadeParaChecagem = Sociedade::where('name', $nome)->first();
+    $sociedadesUsuario = $request->all()['user']['sociedade'];
 
-      if(!$sociedadeParaChecagem){
-        return response()->json([
-          "Sociedade Não Encontrada"
-        ], 404);
-      }
+    if (!in_array('administrador', $sociedadesUsuario)) {
+      return response()->json([
+        "Você não tem acesso aqui"
+      ], 401);
+    }
 
-      Sociedade::where('name', $nome)->delete();
+    $sociedadeParaChecagem = Sociedade::where('name', $nome)->first();
 
-      return  response()->json([
-        'message'=> 'Excluida com Sucesso',
-        'sociedade' => $sociedadeParaChecagem,
-        ]);
+    if (!$sociedadeParaChecagem) {
+      return response()->json([
+        "Sociedade Não Encontrada"
+      ], 404);
+    }
 
+    Sociedade::where('name', $nome)->delete();
+
+    return  response()->json([
+      'message' => 'Excluida com Sucesso',
+      'sociedade' => $sociedadeParaChecagem,
+    ]);
   }
 }
