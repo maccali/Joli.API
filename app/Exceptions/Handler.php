@@ -38,14 +38,14 @@ class Handler extends ExceptionHandler
      */
     public function report(Throwable $exception)
     {
-        $date = new DateTime();
-        $time = date('d-m-Y', strtotime($date->getTimestamp())); 
-        // insert error to DB -> error_logs
-        $erro = new ErroLog();
-        $erro['time'] = $time;
-        $erro['log'] = $exception->gettype;
-        $erro['error'] = $exception->getMessage();
-        $erro->save();
+        // $date = new DateTime();
+        // $time = date('d-m-Y', strtotime($date->getTimestamp()));
+        // // insert error to DB -> error_logs
+        // $erro = new ErroLog();
+        // $erro['time'] = $time;
+        // $erro['log'] = $exception->gettype;
+        // $erro['error'] = $exception->getMessage();
+        // $erro->save();
 
         parent::report($exception);
     }
