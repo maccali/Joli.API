@@ -11,7 +11,7 @@ class ErroLog extends Model
     protected $fillable = [
         'data',
         'status',
-        'user',
+        'operator',
         'request',
         'response',
       ];

@@ -17,7 +17,7 @@ class CreateAuditHistoriesTable extends Migration
             $table->increments('auditHistoryId');
             $table->string('time')->nullable();
 			      $table->string('status')->index()->nullable();
-			      $table->longText('user')->nullable();
+			      $table->longText('operator')->nullable();
 			      $table->longText('request')->nullable();
 			      $table->longText('response')->nullable();
         });
