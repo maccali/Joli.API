@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use DateTime;
 use Closure;
+use Illuminate\Support\Facades\DB;
 
 class AuditMiddleware
 {
@@ -39,7 +40,7 @@ class AuditMiddleware
         $requestFiltered = json_encode($requestFiltered);
         $responseFiltered = json_encode($responseFiltered);
 
-        \DB::insert('insert into audit_histories(time,status, user, request, response)
+        DB::insert('insert into audit_histories(time,status, user, request, response)
                     values( ?, ?, ?, ?, ?)', [$time, $status, $user, $requestFiltered, $responseFiltered]);
 
         return $response;

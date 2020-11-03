@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateEstadoTable extends Migration
+class CreateErrorLogsTabela extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class CreateEstadoTable extends Migration
      */
     public function up()
     {
-        Schema::create('estado', function (Blueprint $table) {
+        Schema::create('error_logs_tabela', function (Blueprint $table) {
             $table->increments('codigo');
-            $table->string('nome', 250);
-			$table->string('uf', 2);
+            $table->timestamp('time', 0);
+			$table->string('log', 250);
+			$table->string('error', 50);
         });
     }
 
@@ -27,6 +28,6 @@ class CreateEstadoTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('estado');
+        Schema::dropIfExists('error_logs_tabela');
     }
 }

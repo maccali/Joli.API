@@ -19,7 +19,9 @@ class CreatePessoaTable extends Migration
 			$table->string('email', 150);
 			$table->string('endereco', 150);
 			$table->string('telefone', 15);
-			$table->integer('fk_cidade')->references('codigo')->on('cidade');
+            $table->string('cep', 8);
+            $table->string('cidade', 250);
+            $table->string('uf', 2);
         });
     }
 
