@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ErroLog extends Model
 {
-    protected $table = "errosLogs";
-    protected $primaryKey = "errosLogId";
+    protected $table = "erros_logs_tabela";
+    protected $primaryKey = "codigo";
     protected $fillable = [
         'time',
         'log',

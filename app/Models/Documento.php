@@ -6,12 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Documento extends Model
 {
-    protected $table = "documentos";
-    protected $primaryKey = "documentoId";
+    protected $table = "documento";
+    protected $primaryKey = "codigo";
     protected $fillable = [
-        'documento',
         'tipo',
+        'nome',
+        'documento',
         'processoId',
         'upload',
+        'cod_processo',
       ];
 }

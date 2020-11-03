@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pessoa extends Model
 {
-    protected $table = "pessoas";
-    protected $primaryKey = "pessoaId";
+    protected $table = "pessoa";
+    protected $primaryKey = "codigo";
     protected $fillable = [
         'nome',
         'email',

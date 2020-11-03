@@ -6,14 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Processo extends Model
 {
-    protected $table = "processos";
-    protected $primaryKey = "processoId";
+    protected $table = "processo";
+    protected $primaryKey = "codigo";
     protected $fillable = [
-        'clientId',
-        'funcionarioId',
+        'cod_cliente',
+        'cod_funcionario',
         'numero',
-        'processoTipo',
+        'processo_tipo',
         'abertura',
-        'historicoId',
       ];
 }

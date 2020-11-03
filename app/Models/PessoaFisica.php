@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class PessoaFisica extends Model
 {
-    protected $table = "fisicas";
-    protected $primaryKey = "fisicaId";
+    protected $table = "fisica";
+    protected $primaryKey = "cod_pessoa";
     protected $fillable = [
         'cpf',
         'rg',

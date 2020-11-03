@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Funcionario extends Model
 {
-    protected $table = "funcionarios";
-    protected $primaryKey = "funcionarioId";
+    protected $table = "funcionario";
+    protected $primaryKey = "codigo";
     protected $fillable = [
         'cargo',
-        'dataContrato',
+        'data_contrato',
         'senha',
-        'fisicaId',
+        'cod_fisica',
       ];
 }

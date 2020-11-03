@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class DocumentoProcessual extends Model
 {
-    protected $table = "documentos_processuais";
-    protected $primaryKey = "documentoPrecessualId";
+    protected $table = "documentos_processual";
+    protected $primaryKey = "codigo";
     protected $fillable = [
         'processo',
         'upload',
+        'cod_processo',
       ];
 }
