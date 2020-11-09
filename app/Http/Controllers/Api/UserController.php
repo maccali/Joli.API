@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Validator;
 
 class UserController extends Controller
@@ -68,7 +69,7 @@ class UserController extends Controller
         "Email Já existente"
       ], 400);
     }
-
+    $data['password'] = Hash::make($data['password']);
     $usuario = User::create($data);
 
     return response()->json($usuario);
@@ -139,7 +140,7 @@ class UserController extends Controller
 
     $user->name = $data['name'];
     $user->email = $data['email'];
-    $user->password = $data['password'];
+    $user->password = Hash::make($data['password']);
     $user->sociedade = $data['sociedade'];
     $user->save();
 
