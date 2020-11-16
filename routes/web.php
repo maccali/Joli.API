@@ -18,7 +18,7 @@ Route::get('/', function () {
 });
 
 //GET ROUTES FOR CONTROLLERS
-Route::get('pessoa','Api\PessoaController@index');
+//Route::get('pessoa','Api\PessoaController@index');
 Route::get('pessoa/{id}','Api\PessoaController@show');
 Route::get('pessoa/{nome}','Api\PessoaController@showName');
 Route::get('fisica','Api\PessoaFisicaController@index');
@@ -60,10 +60,10 @@ Route::get('acesso/funcionario/{id}','Api\AcessoController@showIdFuncionario');
 Route::get('acesso/{date}','Api\AcessoController@showDate');
 
 //POST ROUTES FOR CONTROLLERS
-Route::post('pessoa','Api\PessoaController@store');
-Route::post('pessoa/fisica/cliente','Api\PessoaController@storeFisicaCliente');
-Route::post('pessoa/juridica/cliente','Api\PessoaController@storeJuridicaCliente');
-Route::post('pessoa/fisica/funcionario','Api\PessoaController@storeFisicaFuncionario');
+Route::get('pessoa','Api\PessoaController@store');
+Route::get('pessoa/fisica/cliente','Api\PessoaController@storeFisicaCliente');
+Route::get('pessoa/juridica/cliente','Api\PessoaController@storeJuridicaCliente');
+Route::get('pessoa/fisica/funcionario','Api\PessoaController@storeFisicaFuncionario');
 Route::post('fisica','Api\PessoaFisicaController@store');
 Route::post('juridica','Api\PessoaJuridicaController@store');
 Route::post('cliente','Api\ClienteController@store');

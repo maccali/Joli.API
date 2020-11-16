@@ -30,11 +30,24 @@ class PessoaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $pessoa = Pessoa::find($id);
 
         return response()->json($pessoa);
+
+        $pessoa = new Pessoa;
+        $pessoa = $request->all();
+        //$id = DB::select('select max(codigo) from pessoa');
+        //$id++;
+        $ar = array_values($pessoa);
+        if($ar[0] == "FISICA"){
+            $resp = DB::select('select * from pessoa p, fisica f where p.codigo = f.cod_pessoa');
+        } else if($ar[0] == "JURIDICA") {
+            $resp = DB::select('select * from pessoa p, juridica f where p.codigo = f.cod_pessoa');
+        }
+
+        return response()->json($resp);
     }
 
     /**
@@ -45,7 +58,7 @@ class PessoaController extends Controller
      */
     public function showName($name)
     {
-        $pessoa = DB::select('select * from pessoa where nome = ?', [$name]);
+        $pessoa = DB::select('select * from pessoa where nome like ?', [$name]);
 
         return response()->json($pessoa);
     }
@@ -59,12 +72,17 @@ class PessoaController extends Controller
     public function store(Request $request)
     {
         $pessoa = new Pessoa;
-        $pessoa->pessoa = $request->pessoa;
-        $pessoa->save();
+        $pessoa = $request->all();
+        //$id = DB::select('select max(codigo) from pessoa');
+        //$id++;
+        $ar = array_values($pessoa);
+        if($ar[0] == "FISICA"){
+            $resp = PessoaController::storeFisicaCliente($request);
+        } else if($ar[0] == "JURIDICA") {
+            $resp = PessoaController::storeJuridicaCliente($request);
+        }
 
-        $id = DB::select('select max(codigo) from pessoa');
-
-        return response()->json($pessoa);
+        return response()->json($resp);
     }
 
         /**
@@ -76,23 +94,44 @@ class PessoaController extends Controller
     public function storeFisicaCliente(Request $request)
     {
         $pessoa = new Pessoa;
-        $pessoa->pessoa = $request->pessoa;
-        $pessoa->save();
+        $pessoa = $request->all();
+        return response()->json($pessoa);
+        $pessoap = ["nome" => $pessoa['nome'], "email" => $pessoa['email'], 
+                    "endereco" => $pessoa['endereco'], $pessoa['telefone'], 
+                    "cep" => $pessoa['cep'], "cidade" => $pessoa['cidade'],
+                    "uf" => $pessoa['uf']];
+        $ar = array_values($pessoap);
 
-        $id = DB::select('select max(codigo) from pessoa');
+        $insPes = DB::table('pessoa')->insert(
+            ['nome' => $ar[0], 'email' => $ar[1],
+             'endereco' => $ar[2], 'telefone' => $ar[3],
+             'cep' => $ar[4], 'cidade' => $ar[5], 'uf' => $ar[6]],
+             ['codigo']
+        );
+
+        $id = array_values(DB::select('select max(codigo) from pessoa'));
 
         $pessoaf = new PessoaFisica;
-        $pessoaf->pessoa = $request->pessoa;
-        $pessoaf['fisicaId'] = $id;
-        $pessoaf->save();
+        $pessoaf = ["cod_pessoa" => $id[0], "cpf" => $pessoa['cpf'],
+                    "rg" => $pessoa['rg'], "nascimento" => $pessoa['nascimento']];
+        $ar = array_values($pessoaf);
+
+        $insFis = DB::table('fisica')->insert(
+            ['cod_pessoa' => $ar[0], 'cpf' => $ar[1],
+             'rg' => $ar[2], 'nascimento' => $ar[3]],
+            ['cod_pessoa']
+        );
 
         $pessoac = new Cliente;
-        $pessoac->cliente = $request->cliente;
-        $pessoac['fisicaId'] = $id;
-        $pessoac['juridicaId'] = 0;
-        $pessoac->save();
+        $pessoac = ["cod_juridica" => 0, "cod_fisica" => $id[0]];
+        $ar = array_values($pessoac);
 
-        return response()->json([$pessoa, $pessoaf, $pessoac]);
+        $insCli = DB::table('cliente')->insert(
+            ['cod_juridica' => $ar[0], 'cod_fisica' => $ar[1]],
+            ['codigo']
+        );
+
+        return [$insPes, $insFis, $insCli];
     }
 
     /**
@@ -104,23 +143,45 @@ class PessoaController extends Controller
     public function storeJuridicaCliente(Request $request)
     {
         $pessoa = new Pessoa;
-        $pessoa->pessoa = $request->pessoa;
-        $pessoa->save();
+        $pessoa = $request->all();
+        return response()->json($pessoa);
+        $pessoap = ["nome" => $pessoa['nome'], "email" => $pessoa['email'], 
+                    "endereco" => $pessoa['endereco'], $pessoa['telefone'], 
+                    "cep" => $pessoa['cep'], "cidade" => $pessoa['cidade'],
+                    "uf" => $pessoa['uf']];
+        $ar = array_values($pessoap);
 
-        $id = DB::select('select max(codigo) from pessoa');
+        $insPes = DB::table('pessoa')->insert(
+            ['nome' => $ar[0], 'email' => $ar[1],
+             'endereco' => $ar[2], 'telefone' => $ar[3],
+             'cep' => $ar[4], 'cidade' => $ar[5], 'uf' => $ar[6]],
+             ['codigo']
+        );
 
-        $pessoaf = new PessoaFisica;
-        $pessoaf->pessoaf = $request->pessoaf;
-        $pessoaf['fisicaId'] = $id;
-        $pessoaf->save();
+        $id = array_values(DB::select('select max(codigo) from pessoa'));
+
+        $pessoaj = new PessoaJuridica;
+        $pessoaj = ["cod_pessoa" => $id[0], "cnpj" => $pessoa['cnpj'],
+                    "cnae" => $pessoa['cnae'], "abertura" => $pessoa['abertura'],
+                    "naturezaJuridica" => $pessoa['naturezaJuridica']];
+        $ar = array_values($pessoaj);
+
+        $insJur = DB::table('fisica')->insert(
+            ['cod_pessoa' => $ar[0], 'cpf' => $ar[1],
+             'rg' => $ar[2], 'nascimento' => $ar[3]],
+            ['cod_pessoa']
+        );
 
         $pessoac = new Cliente;
-        $pessoac->cliente = $request->cliente;
-        $pessoac['fisicaId'] = 0;
-        $pessoac['juridicaId'] = $id;
-        $pessoac->save();
+        $pessoac = ["cod_juridica" => $id[0], "cod_fisica" => 0];
+        $ar = array_values($pessoac);
 
-        return response()->json([$pessoa, $pessoaf, $pessoac]);
+        $insCli = DB::table('cliente')->insert(
+            ['cod_juridica' => $ar[0], 'cod_fisica' => $ar[1]],
+            ['codigo']
+        );
+
+        return [$insPes, $insJur, $insCli];
     }
 
         /**
@@ -132,22 +193,49 @@ class PessoaController extends Controller
     public function storeFisicaFuncionario(Request $request)
     {
         $pessoa = new Pessoa;
-        $pessoa->pessoa = $request->pessoa;
-        $pessoa->save();
+        $pessoa = $request->all();
+        $pessoap = ["nome" => $pessoa['nome'], "email" => $pessoa['email'], 
+                    "endereco" => $pessoa['endereco'], $pessoa['telefone'], 
+                    "cep" => $pessoa['cep'], "cidade" => $pessoa['cidade'],
+                    "uf" => $pessoa['uf']];
+        $ar = array_values($pessoap);
 
-        $id = DB::select('select max(codigo) from pessoa');
+        $insPes = DB::table('pessoa')->insert(
+            ['nome' => $ar[0], 'email' => $ar[1],
+             'endereco' => $ar[2], 'telefone' => $ar[3],
+             'cep' => $ar[4], 'cidade' => $ar[5], 'uf' => $ar[6]],
+             ['codigo']
+        );
+
+        //$id = array_values(DB::select('select max(codigo) from pessoa'));
+        $id = array_values(DB::select('select max(codigo) from pessoa'));
+        $idc = $id[0];
+        $idx = array_values(get_object_vars($idc));
+        $idz = strval($idx[0]);
 
         $pessoaf = new PessoaFisica;
-        $pessoaf->pessoaFisica = $request->pessoaFisica;
-        $pessoaf->setAttribute('fisicaId', $id);
-        $pessoaf->save();
+        $pessoaf = ["cod_pessoa" => $idz, "cpf" => $pessoa['cpf'],
+                    "rg" => $pessoa['rg'], "nascimento" => $pessoa['nascimento']];
+        $ar = array_values($pessoaf);
 
-        $pessoac = new Funcionario;
-        $pessoac->funcionario = $request->funcionario;
-        $pessoac->setAttribute('fisicaId', $id);
-        $pessoac->save();
-
-        return response()->json([$pessoa, $pessoaf, $pessoac]);
+        $insFis = DB::table('fisica')->insert(
+            ['cod_pessoa' => $ar[0], 'cpf' => $ar[1],
+             'rg' => $ar[2], 'nascimento' => $ar[3]],
+            ['cod_pessoa']
+        );
+        
+        $pessoau = new Funcionario;
+        $pessoau = ["cargo" => $pessoa['cargo'], "data_contrato" => $pessoa['data_contrato'],
+                    "senha" => $pessoa['senha'], "cod_fisica" => $idz];
+        $ar = array_values($pessoau);
+        
+        $insFunc = DB::table('funcionario')->insert(
+            ['cargo' => $ar[0], 'data_contrato' => $ar[1],
+             'senha' => $ar[2], 'cod_fisica' => $ar[3]],
+            ['codigo']
+        );
+        
+        return response()->json([$insPes, $insFis, $insFunc]);
     }
 
             
@@ -161,14 +249,16 @@ class PessoaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $pessoa = Pessoa::find($id);
-        $antes = $pessoa;
+        $pessoa = $request->all();
 
-        $pessoa->pessoa = $request->pessoa;
+        $ar = array_values($pessoa);
+        if($ar[0] == "FISICA"){
+            $resp = PessoaController::updateFisicaCliente($request, $id);
+        } else if($ar[0] == "JURIDICA") {
+            $resp = PessoaController::updateJuridicaCliente($request, $id);
+        }
 
-        $pessoa->update();
-
-        return response()->json([$antes, $pessoa]);
+        return response()->json($resp);
     }
 
     /**
@@ -181,16 +271,33 @@ class PessoaController extends Controller
     public function updateFisicaCliente(Request $request, $id)
     {
         $pessoa = Pessoa::find($id);
-        $antes = $pessoa;
-        $pessoa->pessoa = $request->pessoa;
-        $pessoa->update();
+        $pessoa = $request->all();
+        $pessoap = ["nome" => $pessoa['nome'], "email" => $pessoa['email'], 
+                    "endereco" => $pessoa['endereco'], $pessoa['telefone'], 
+                    "cep" => $pessoa['cep'], "cidade" => $pessoa['cidade'],
+                    "uf" => $pessoa['uf']];
+        $ar = array_values($pessoap);
+
+        $insPes = DB::table('pessoa')->where('codigo', $id)->update(
+            ['nome' => $ar[0], 'email' => $ar[1],
+             'endereco' => $ar[2], 'telefone' => $ar[3],
+             'cep' => $ar[4], 'cidade' => $ar[5], 'uf' => $ar[6]],
+             ['codigo']
+        );
 
         $pessoaf = PessoaFisica::find($id);
-        $antesf = $pessoa;
-        $pessoaf->pessoa = $request->pessoa;
-        $pessoaf->update();
+        $pessoaf = new PessoaFisica;
+        $pessoaf = ["cod_pessoa" => $id[0], "cpf" => $pessoa['cpf'],
+                    "rg" => $pessoa['rg'], "nascimento" => $pessoa['nascimento']];
+        $ar = array_values($pessoaf);
 
-        return response()->json([$antes, $pessoa, $antesf, $pessoaf]);
+        $insFis = DB::table('fisica')->where('cod_pessoa', $id)->update(
+            ['cod_pessoa' => $ar[0], 'cpf' => $ar[1],
+             'rg' => $ar[2], 'nascimento' => $ar[3]],
+            ['cod_pessoa']
+        );
+
+        return [$insPes, $insFis];
     }
 
     /**
@@ -203,16 +310,35 @@ class PessoaController extends Controller
     public function updateJuridicaCliente(Request $request, $id)
     {
         $pessoa = Pessoa::find($id);
-        $antes = $pessoa;
-        $pessoa->pessoa = $request->pessoa;
-        $pessoa->update();
+        $pessoa = $request->all();
+        $pessoap = ["nome" => $pessoa['nome'], "email" => $pessoa['email'], 
+                    "endereco" => $pessoa['endereco'], $pessoa['telefone'], 
+                    "cep" => $pessoa['cep'], "cidade" => $pessoa['cidade'],
+                    "uf" => $pessoa['uf']];
+        $ar = array_values($pessoap);
+
+        $insPes = DB::table('pessoa')->where('codigo', $id)->update(
+            ['nome' => $ar[0], 'email' => $ar[1],
+             'endereco' => $ar[2], 'telefone' => $ar[3],
+             'cep' => $ar[4], 'cidade' => $ar[5], 'uf' => $ar[6]],
+             ['codigo']
+        );
 
         $pessoaf = PessoaJuridica::find($id);
-        $antesf = $pessoa;
-        $pessoaf->pessoa = $request->pessoa;
-        $pessoaf->update();
+        $pessoaf = new PessoaFisica;
+        $pessoaf = ["cod_pessoa" => $id[0], "cnpj" => $pessoa['cnpj'],
+                    "cnae" => $pessoa['cnae'], "abertura" => $pessoa['abertura'],
+                    "naturezaJuridica" => $pessoa['naturezaJuridica']];
+        $ar = array_values($pessoaf);
 
-        return response()->json([$antes, $pessoa, $antesf, $pessoaf]);
+        $insFis = DB::table('juridica')->insert(
+            ['cod_pessoa' => $ar[0], 'cnpj' => $ar[1],
+             'cnae' => $ar[2], 'abertura' => $ar[3],
+             'naturezaJuridica' => $ar[4]],
+            ['cod_pessoa']
+        );
+
+        return [$insPes, $insFis];
     }
 
     /**
@@ -225,21 +351,45 @@ class PessoaController extends Controller
     public function updateFisicaFuncionario(Request $request, $id)
     {
         $pessoa = Pessoa::find($id);
-        $antes = $pessoa;
-        $pessoa->pessoa = $request->pessoa;
-        $pessoa->update();
+        $pessoa = $request->all();
+        $pessoap = ["nome" => $pessoa['nome'], "email" => $pessoa['email'], 
+                    "endereco" => $pessoa['endereco'], $pessoa['telefone'], 
+                    "cep" => $pessoa['cep'], "cidade" => $pessoa['cidade'],
+                    "uf" => $pessoa['uf']];
+        $ar = array_values($pessoap);
+
+        $insPes = DB::table('pessoa')->where('codigo', $id)->update(
+            ['nome' => $ar[0], 'email' => $ar[1],
+             'endereco' => $ar[2], 'telefone' => $ar[3],
+             'cep' => $ar[4], 'cidade' => $ar[5], 'uf' => $ar[6]],
+             ['codigo']
+        );
 
         $pessoaf = PessoaFisica::find($id);
-        $antesf = $pessoaf;
-        $pessoaf->pessoa = $request->pessoaf;
-        $pessoaf->update();
+        $pessoaf = new PessoaFisica;
+        $pessoaf = ["cod_pessoa" => $id[0], "cpf" => $pessoa['cpf'],
+                    "rg" => $pessoa['rg'], "nascimento" => $pessoa['nascimento']];
+        $ar = array_values($pessoaf);
 
-        $pessoau = Funcionario::find('cod_fisica', $id);
-        $antesu = $pessoau;
-        $pessoau->pessoa = $request->pessoau;
-        $pessoau->update();
+        $insFis = DB::table('fisica')->where('cod_pessoa', $id)->update(
+            ['cod_pessoa' => $ar[0], 'cpf' => $ar[1],
+             'rg' => $ar[2], 'nascimento' => $ar[3]],
+            ['cod_pessoa']
+        );
 
-        return response()->json([$antes, $pessoa, $antesf, $pessoaf]);
+        $insFunc = Funcionario::find($id);
+        $pessoau = new Funcionario;
+        $pessoau = ["cargo" => $pessoa['cargo'], "data_contrato" => $pessoa['data_contrato'],
+                    "senha" => $pessoa['senha'], "cod_fisica" => $id[0]];
+        $ar = array_values($pessoau);
+
+        $insFunc = DB::table('funcionario')->where('cod_fisica', $id)->update(
+            ['cargo' => $ar[0], 'data_contrato' => $ar[1],
+             'senha' => $ar[2], 'cod_fisica' => $ar[3]],
+            ['codigo']
+        );
+
+        return response()->json([$insPes, $insFis, $insFunc]);
     }
 
     /**
@@ -248,11 +398,18 @@ class PessoaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $pessoa = DB::delete('delete from pessoa where codigo = ?', [$id]);
+        $pessoa = $request->all();
 
-        return response()->json([$pessoa]);
+        $ar = array_values($pessoa);
+        if($ar[0] == "FISICA"){
+            $resp = PessoaController::destroyFisicaCliente($id);
+        } else if($ar[0] == "JURIDICA") {
+            $resp = PessoaController::destroyJuridicaCliente($id);
+        }
+
+        return response()->json($resp);
     }
 
     /**
