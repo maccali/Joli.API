@@ -97,11 +97,17 @@ class ProcessoController extends Controller
      */
     public function store(Request $request)
     {
-        $pessoa = new Processo;
-        $pessoa->processo = $request->processo;
-        $pessoa->save();
+        $data = $request->all();
+        $ar = array_values($data);
 
-        return response()->json($pessoa);
+        $insProc = DB::table('processo')->insert(
+            ['cod_cliente' => $ar[0], 'cod_funcionario' => $ar[1],
+             'numero' => $ar[2], 'processo_tipo' => $ar[3],
+             'abertura' => $ar[4]],
+             ['codigo']
+        );
+
+        return response()->json($insProc);
     }
 
     /**
@@ -113,14 +119,17 @@ class ProcessoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $pessoa = Processo::find($id);
-        $antes = $pessoa;
+        $data = $request->all();
+        $ar = array_values($data);
 
-        $pessoa->processo = $request->processo;
+        $insProc = DB::table('processo')->where('codigo', $id)->update(
+            ['cod_cliente' => $ar[0], 'cod_funcionario' => $ar[1],
+             'numero' => $ar[2], 'processo_tipo' => $ar[3],
+             'abertura' => $ar[4]],
+             ['codigo']
+        );
 
-        $pessoa->update();
-
-        return response()->json([$antes, $pessoa]);
+        return response()->json($insProc);
     }
 
     /**

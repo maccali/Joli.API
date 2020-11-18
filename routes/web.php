@@ -69,7 +69,7 @@ Route::post('juridica','Api\PessoaJuridicaController@store');
 Route::post('cliente','Api\ClienteController@store');
 Route::post('funcionario','Api\FuncionarioController@store');
 Route::post('processo','Api\ProcessoController@store');
-Route::post('documento','Api\DocumentoController@store');
+//Route::get('documento','Api\DocumentoController@store');
 Route::post('documentoProcessual','Api\DocumentoProcessualController@store');
 Route::post('historico','Api\HistoricoController@store');
 Route::post('erroLog','Api\ErrorLogsController@store');
