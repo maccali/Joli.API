@@ -41,7 +41,10 @@ Route::group(['middleware' => ['audit', 'apiJwt']], function () {
     Route::get('costume/{nome}', 'Api\CostumeController@show');
     Route::put('costume/{nome}', 'Api\CostumeController@update');
     Route::delete('costumes/{nome}', 'Api\CostumeController@delete');
-});
+
+    // AUDITORIA
+    Route::get('auditoria', 'Api\AuditHistoriesController@index');
+  });
 
 Route::group(['middleware' => ['audit']], function () {
   Route::post('auth/login', 'Api\AuthController@login');
