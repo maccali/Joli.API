@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Historicos extends Model
 {
-    protected $table = "historicos";
-    protected $primaryKey = "historicoId";
+    protected $table = "historico";
+    protected $primaryKey = "codigo";
     protected $fillable = [
         'fase',
         'data',
+        'cod_processo',
       ];
 }

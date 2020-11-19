@@ -4,13 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class DocumentoProcessual extends Model
+class ErroLog extends Model
 {
-    protected $table = "documentos_processual";
+    protected $table = "erros_logs_tabela";
     protected $primaryKey = "codigo";
     protected $fillable = [
-        'processo',
-        'upload',
-        'cod_processo',
+        'time',
+        'log',
+        'error',
       ];
 }

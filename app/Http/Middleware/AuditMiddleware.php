@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use DateTime;
 use Closure;
+use Illuminate\Support\Facades\DB;
 
 class AuditMiddleware
 {

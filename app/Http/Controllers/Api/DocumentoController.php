@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Documento;
+use Exception;
 use Illuminate\Support\Facades\Storage;
 
 class DocumentoController extends Controller
@@ -31,8 +32,9 @@ class DocumentoController extends Controller
     public function show($id)
     {
         $pessoa = Documento::find($id);
+        $path = $pessoa["documento"];
 
-        return response()->json($pessoa);
+        return response()->download(public_path() . $path);
     }
 
     /**
@@ -45,8 +47,9 @@ class DocumentoController extends Controller
     {
         $pessoa = DB::select('select * from documento 
                               where cod_processo = ?', [$id]);
+        $path = $pessoa["documento"];
 
-        return response()->json($pessoa);
+        return response()->download(public_path() . $path);
     }
 
     /**
@@ -59,8 +62,9 @@ class DocumentoController extends Controller
     {
         $pessoa = DB::select('select * from documento 
                               where upload = ?', [$date]);
+        $path = $pessoa["documento"];
 
-        return response()->json($pessoa);
+        return response()->download(public_path() . $path);
     }
 
     /**
@@ -84,7 +88,7 @@ class DocumentoController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
+    {/*
         $pessoa = new Documento;
         $pessoa->documento = $request->documento;
         $pessoa['upload'] = Apoio::getTimestamp();
@@ -95,7 +99,23 @@ class DocumentoController extends Controller
         
         $pessoa->save();
 
-        return response()->json($pessoa);
+        return response()->json($pessoa);*/
+
+        $format = $request->input('formato');
+        $data = array_values([$request->input("formato"), $request->input('nome'), 
+                              $request->input("upload"), $request->input("procId")]);
+        
+        $path = public_path() . 'Documento_' . $data[1] . '_' . $data[2] . $format;
+        $file = $request->file()->storeAs('', $path);
+
+        return response()->json([$path]);
+
+        $insDoc = DB::table('documento_processual')->insert(
+            ['tipo' => $data[0], 'nome' => $data[1], 'documento' => $path,
+             'upload' => $data[2], 'cod_processo' => $data[3]]
+        );
+
+        return response()->json([$insDoc, $file]);
     }
 
     /**
@@ -108,18 +128,19 @@ class DocumentoController extends Controller
     public function update(Request $request, $id)
     {
         $pessoa = Documento::find($id);
-        $filep = Storage::get($pessoa['documento']);
-        $antes = $pessoa;
+        
+        $format = $request->input('formato');
+        $data = array_values($request->all());
+        
+        $path = 'Documento_' + $data[1] + '_' + $data[3] + $format;
+        $file = $request->file()->storeAs('', $path);
 
-        $pessoa->docuemnto = $request->documento;
-        $pessoa['upload'] = Apoio::getTimestamp();
-        $path = 'documento'+$pessoa['processoId']+$pessoa['upload']+'.txt';
-        $file = Storage::put($path, $request->files());
-        $pessoa['documento'] = $path;
+        $insDoc = DB::table('documento_processual')->where('codigo', $id)->update(
+            ['tipo' => $data[0], 'nome' => $data[1], 'documento' => $data[2],
+             'processoId' => $data[3], 'upload' => $data[4], 'cod_processo' => $data[5]]
+        );
 
-        $pessoa->update();
-
-        return response()->json([$antes, $pessoa]);
+        return response()->json([$insDoc, $file]);
     }
 
     /**
@@ -131,7 +152,7 @@ class DocumentoController extends Controller
     public function destroy($id)
     {
         $pessoa = DB::select('select documento from documento where codigo = ?', [$id]);
-        Storage::delete($pessoa);
+        unlink($pessoa['documento']);
         $pessoa = DB::delete('delete from docuemnto where codigo = ?', [$id]);
 
         return response()->json([$pessoa]);

@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Acesso extends Model
 {
-    protected $table = "acessos";
-    protected $primaryKey = "acessoId";
+    protected $table = "acesso";
+    protected $primaryKey = "codigo";
     protected $fillable = [
         'time',
         'ip',
         'feito',
-        'funcionarioId',
+        'cod_funcionario',
       ];
 }

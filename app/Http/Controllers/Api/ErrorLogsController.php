@@ -41,7 +41,7 @@ class ErrorLogsController extends Controller
      */
     public function showDate($date)
     {
-        $pessoa = DB::select('select * from error_logs 
+        $pessoa = DB::select('select * from error_logs_tabela 
                               where time = ?', [$date]);
 
         return response()->json($pessoa);
@@ -55,7 +55,7 @@ class ErrorLogsController extends Controller
      */
     public function showDates($date1, $date2)
     {
-        $pessoa = DB::select('select * from error_logs 
+        $pessoa = DB::select('select * from error_logs_tabela 
                               where time between ? and ?', [$date1, $date2]);
 
         return response()->json($pessoa);
@@ -103,7 +103,7 @@ class ErrorLogsController extends Controller
      */
     public function destroy($id)
     {
-        $pessoa = DB::delete('delete from error_logs where codigo = ?', [$id]);
+        $pessoa = DB::delete('delete from error_logs_tabela where codigo = ?', [$id]);
 
         return response()->json([$pessoa]);
     }

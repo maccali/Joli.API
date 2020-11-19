@@ -31,8 +31,9 @@ class DocumentoProcessualController extends Controller
     public function show($id)
     {
         $pessoa = DocumentoProcessual::find($id);
+        $path = $pessoa["processo"];
 
-        return response()->json($pessoa);
+        return response()->json($pessoa)->file($path);
     }
 
     /**
@@ -85,6 +86,7 @@ class DocumentoProcessualController extends Controller
      */
     public function store(Request $request)
     {
+        /*
         $pessoa = new DocumentoProcessual;
         $pessoa->documento = $request->documento;
         $pessoa['upload'] = Apoio::getTimestamp();
@@ -93,8 +95,18 @@ class DocumentoProcessualController extends Controller
         $pessoa['processo'] = $path;
         
         $pessoa->save();
+*/
+        $format = $request->input('formato');
+        $data = array_values($request->all());
+        
+        $path = 'processo_' + $data[1] + '_' + $data[2] + $format;
+        $file = $request->file()->storeAs('', $path);
 
-        return response()->json($pessoa);
+        $insDoc = DB::table('documento_processual')->insert(
+            ['processo' => $path, 'upload' => $data[1], 'cod_processo' => $data[2]]
+        );
+
+        return response()->json([$insDoc, $file]);
     }
 
     /**
@@ -105,7 +117,7 @@ class DocumentoProcessualController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
+    {/*
         $pessoa = DocumentoProcessual::find($id);
         $filep = Storage::get($pessoa['processo']);
         $antes = $pessoa;
@@ -116,9 +128,21 @@ class DocumentoProcessualController extends Controller
         Storage::put($path, $request->files());
         $pessoa['processo'] = $path;
 
-        $pessoa->update();
+        $pessoa->update(); */
+        $pessoa = DocumentoProcessual::find($id);
+        unlink($pessoa['processo']);
 
-        return response()->json([$antes, $pessoa]);
+        $format = $request->input('formato');
+        $data = array_values($request->all());
+        
+        $path = 'processo_' + $data[1] + '_' + $data[2] + $format;
+        $file = $request->file()->storeAs('', $path);
+
+        $insDoc = DB::table('documento_processual')->where('codigo', $id)(
+            ['processo' => $path, 'upload' => $data[1], 'cod_processo' => $data[2]]
+        );
+
+        return response()->json([$insDoc, $file]);
     }
 
     /**
@@ -130,7 +154,7 @@ class DocumentoProcessualController extends Controller
     public function destroy($id)
     {
         $pessoa = DB::select('select processo from documentos_processual where codigo = ?', [$id]);
-        Storage::delete($pessoa);
+        unlink($pessoa['processo']);
         $pessoa = DB::delete('delete from documentos_processual where codigo = ?', [$id]);
 
         return response()->json([$pessoa]);
