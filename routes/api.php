@@ -44,6 +44,12 @@ Route::group(['middleware' => ['audit', 'apiJwt']], function () {
 
     // AUDITORIA
     Route::get('auditoria', 'Api\AuditHistoriesController@index');
+
+    // DASHBOARD
+    Route::get('totalizador/requisicoes', 'Api\DashboardController@countAudit');
+    Route::get('totalizador/processos', 'Api\DashboardController@countProcessos');
+    Route::get('totalizador/usuarios', 'Api\DashboardController@countUsuarios');
+
   });
 
 Route::group(['middleware' => ['audit']], function () {
