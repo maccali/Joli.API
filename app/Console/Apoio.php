@@ -11,7 +11,7 @@ class Apoio {
         return $ip[0];
     }
 
-    function getTimestamp(){
+    static function getTimestamp(){
         $date = new DateTime();
         $time = date('d-m-Y', strtotime($date->getTimestamp()));
         return $time;

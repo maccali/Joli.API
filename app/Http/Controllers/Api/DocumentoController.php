@@ -108,8 +108,6 @@ class DocumentoController extends Controller
         $path = public_path() . 'Documento_' . $data[1] . '_' . $data[2] . $format;
         $file = $request->file()->storeAs('', $path);
 
-        return response()->json([$path]);
-
         $insDoc = DB::table('documento_processual')->insert(
             ['tipo' => $data[0], 'nome' => $data[1], 'documento' => $path,
              'upload' => $data[2], 'cod_processo' => $data[3]]
@@ -128,16 +126,18 @@ class DocumentoController extends Controller
     public function update(Request $request, $id)
     {
         $pessoa = Documento::find($id);
+        unlink($pessoa['documento']);
         
         $format = $request->input('formato');
-        $data = array_values($request->all());
+        $data = array_values([$request->input("formato"), $request->input('nome'), 
+                              $request->input("upload"), $request->input("procId")]);
         
-        $path = 'Documento_' + $data[1] + '_' + $data[3] + $format;
+        $path = public_path() . 'Documento_' . $data[1] . '_' . $data[2] . $format;
         $file = $request->file()->storeAs('', $path);
 
         $insDoc = DB::table('documento_processual')->where('codigo', $id)->update(
-            ['tipo' => $data[0], 'nome' => $data[1], 'documento' => $data[2],
-             'processoId' => $data[3], 'upload' => $data[4], 'cod_processo' => $data[5]]
+            ['tipo' => $data[0], 'nome' => $data[1], 'documento' => $path,
+             'upload' => $data[2], 'cod_processo' => $data[3]]
         );
 
         return response()->json([$insDoc, $file]);

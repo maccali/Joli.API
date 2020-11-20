@@ -69,9 +69,12 @@ class ErrorLogsController extends Controller
      */
     public function store(Request $request)
     {
-        $pessoa = new ErroLog;
-        $pessoa->erroLog = $request->erroLog;
-        $pessoa->save();
+        $ar = array_values($request->all());
+        $pessoa = DB::table('error_logs_tabela')->insert(
+            ['time' => $ar[0], 'log' => $ar[1],
+            'error' => $ar[2]],
+            ['codigo']
+        );
 
         return response()->json($pessoa);
     }
@@ -85,14 +88,15 @@ class ErrorLogsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $pessoa = ErroLog::find($id);
-        $antes = $pessoa;
+        $ar = array_values($request->all());
+        //$pessoa = new ErroLog;
+        $pessoa = DB::table('pessoa')->where('codigo', $id)->update(
+            ['time' => $ar[0], 'log' => $ar[1],
+            'error' => $ar[2]],
+            ['codigo']
+        );
 
-        $pessoa->erroLog = $request->erroLog;
-
-        $pessoa->update();
-
-        return response()->json([$antes, $pessoa]);
+        return response()->json($pessoa);
     }
 
     /**

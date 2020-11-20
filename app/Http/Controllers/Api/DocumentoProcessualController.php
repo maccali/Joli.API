@@ -33,7 +33,7 @@ class DocumentoProcessualController extends Controller
         $pessoa = DocumentoProcessual::find($id);
         $path = $pessoa["processo"];
 
-        return response()->json($pessoa)->file($path);
+        return response()->download($path);
     }
 
     /**
@@ -46,8 +46,8 @@ class DocumentoProcessualController extends Controller
     {
         $pessoa = DB::select('select * from documentos_processual 
                               where codigo = ?', [$id]);
-
-        return response()->json($pessoa);
+        $path = $pessoa["processo"];
+        return response()->download($path);
     }
 
     /**
@@ -95,7 +95,7 @@ class DocumentoProcessualController extends Controller
         $pessoa['processo'] = $path;
         
         $pessoa->save();
-*/
+
         $format = $request->input('formato');
         $data = array_values($request->all());
         
@@ -105,6 +105,18 @@ class DocumentoProcessualController extends Controller
         $insDoc = DB::table('documento_processual')->insert(
             ['processo' => $path, 'upload' => $data[1], 'cod_processo' => $data[2]]
         );
+
+        return response()->json([$insDoc, $file]);*/
+
+        $format = $request->input('formato');
+        $data = array_values([$request->input('processo'), $request->input('upload'), 
+                              $request->input('cod_processo')]);
+        
+        $path = public_path() . 'processo_' . $data[1] . '_' . $data[2] . $format;
+        $file = $request->file()->storeAs('', $path);
+
+        $insDoc = DB::table('documento_processual')->insert(
+            ['processo' => $path, 'upload' => $data[1], 'cod_processo' => $data[2]]);
 
         return response()->json([$insDoc, $file]);
     }
@@ -133,14 +145,14 @@ class DocumentoProcessualController extends Controller
         unlink($pessoa['processo']);
 
         $format = $request->input('formato');
-        $data = array_values($request->all());
+        $data = array_values([$request->input('processo'), $request->input('upload'), 
+                              $request->input('cod_processo')]);
         
-        $path = 'processo_' + $data[1] + '_' + $data[2] + $format;
+        $path = public_path() . 'processo_' . $data[1] . '_' . $data[2] . $format;
         $file = $request->file()->storeAs('', $path);
 
-        $insDoc = DB::table('documento_processual')->where('codigo', $id)(
-            ['processo' => $path, 'upload' => $data[1], 'cod_processo' => $data[2]]
-        );
+        $insDoc = DB::table('documento_processual')->where('codigo', $id)->update(
+            ['processo' => $path, 'upload' => $data[1], 'cod_processo' => $data[2]]);
 
         return response()->json([$insDoc, $file]);
     }
