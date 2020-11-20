@@ -14,15 +14,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::middleware('auth:api')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
 Route::group(['middleware' => ['audit', 'apiJwt']], function () {
 
     // USER ROUTES
     Route::get('users', 'Api\UserController@index');
+    Route::post('user', 'Api\UserController@store');
     Route::get('users/{id}', 'Api\UserController@show');
+    Route::put('user/{nome}', 'Api\UserController@update');
+    Route::delete('users/{nome}', 'Api\UserController@delete');
 
     // POST ROUTES
     Route::get('posts', 'Api\PostController@index');
@@ -42,11 +41,17 @@ Route::group(['middleware' => ['audit', 'apiJwt']], function () {
     Route::get('costume/{nome}', 'Api\CostumeController@show');
     Route::put('costume/{nome}', 'Api\CostumeController@update');
     Route::delete('costumes/{nome}', 'Api\CostumeController@delete');
-});
+
+    // AUDITORIA
+    Route::get('auditoria', 'Api\AuditHistoriesController@index');
+
+    // DASHBOARD
+    Route::get('totalizador/requisicoes', 'Api\DashboardController@countAudit');
+    Route::get('totalizador/processos', 'Api\DashboardController@countProcessos');
+    Route::get('totalizador/usuarios', 'Api\DashboardController@countUsuarios');
+
+  });
 
 Route::group(['middleware' => ['audit']], function () {
   Route::post('auth/login', 'Api\AuthController@login');
 });
-// Route::post('logout', 'AuthController@logout');
-// Route::post('refresh', 'AuthController@refresh');
-// Route::post('me', 'AuthController@me');

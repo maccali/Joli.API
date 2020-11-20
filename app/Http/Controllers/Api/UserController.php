@@ -5,98 +5,179 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Validator;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(Request $request)
-    {
-        $sociedadesUsuario = $request->all()['user']['sociedade'];
+  /**
+   * Display a listing of the resource.
+   *
+   * @return \Illuminate\Http\Response
+   */
+  public function index(Request $request)
+  {
+    $sociedadesUsuario = $request->all()['user']['sociedade'];
 
-        if(in_array('administrador', $sociedadesUsuario)){
-          $users = User::all();
-          return response()->json($users);
-        }else{
-          return response()->json([
-            "Você não tem acesso aqui"
-          ], 401);
-        }
+    if (!in_array('administrador', $sociedadesUsuario)) {
+      return response()->json([
+        "Você não tem acesso aqui"
+      ], 401);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-      $sociedadesUsuario = $request->all()['user']['sociedade'];
-        //
+    $users = User::all();
+    return response()->json($users);
+  }
+
+  /**
+   * Store a newly created resource in storage.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @return \Illuminate\Http\Response
+   */
+  public function store(Request $request)
+  {
+    $sociedadesUsuario = $request->all()['user']['sociedade'];
+
+    if (!in_array('administrador', $sociedadesUsuario)) {
+      return response()->json([
+        "Você não tem acesso aqui"
+      ], 401);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Request $request, $id)
-    {
-      $sociedadesUsuario = $request->all()['user']['sociedade'];
+    $data = json_decode($request->getContent(), true);
 
-      if(in_array('administrador', $sociedadesUsuario)){
-        $user = User::find($id);
+    $validator = Validator::make(
+      $data,
+      [
+        'name' => 'required',
+        'email' => 'required',
+        'password' => 'required',
+        'sociedade' => 'required',
+      ]
+    );
 
-        return response()->json($user);
-      }else{
-        return response()->json([
-          "Você não tem acesso aqui"
-        ], 401);
-      }
+    if ($validator->fails()) {
+      $messages = $validator->messages();
+      return response()->json([$messages], 400);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-      $sociedadesUsuario = $request->all()['user']['sociedade'];
+    $usuario = User::where('email', $data['email'])->first();
 
-      if(in_array('administrador', $sociedadesUsuario)){
+    if ($usuario) {
+      return response()->json([
+        "Email Já existente"
+      ], 400);
+    }
+    $data['password'] = Hash::make($data['password']);
+    $usuario = User::create($data);
 
-      }else{
-        return response()->json([
-          "Você não tem acesso aqui"
-        ], 401);
-      }
+    return response()->json($usuario);
+  }
+
+  /**
+   * Display the specified resource.
+   *
+   * @param  int  $id
+   * @return \Illuminate\Http\Response
+   */
+  public function show(Request $request, $id)
+  {
+    $sociedadesUsuario = $request->all()['user']['sociedade'];
+
+    if (in_array('administrador', $sociedadesUsuario)) {
+      $userHere = User::find($id);
+
+      return response()->json($userHere);
+    } else {
+      return response()->json([
+        "Você não tem acesso aqui"
+      ], 401);
+    }
+  }
+
+  /**
+   * Update the specified resource in storage.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @param  int  $id
+   * @return \Illuminate\Http\Response
+   */
+  public function update(Request $request, $id)
+  {
+    $sociedadesUsuario = $request->all()['user']['sociedade'];
+
+    if (!in_array('administrador', $sociedadesUsuario)) {
+      return response()->json([
+        "Você não tem acesso aqui"
+      ], 401);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Request $request, $id)
-    {
-      $sociedadesUsuario = $request->all()['user']['sociedade'];
+    $data = json_decode($request->getContent(), true);
 
-      if(in_array('administrador', $sociedadesUsuario)){
+    $validator = Validator::make(
+      $data,
+      [
+        'name' => 'required',
+        'email' => 'required',
+        'password' => 'required',
+        'sociedade' => 'required',
+      ]
+    );
 
-      }else{
-        return response()->json([
-          "Você não tem acesso aqui"
-        ], 401);
-      }
-        //
+    if ($validator->fails()) {
+      $messages = $validator->messages();
+      return response()->json([$messages], 400);
     }
+
+    $user = User::where('userId', $id)->first();
+
+    if (!$user) {
+      return response()->json([
+        "Usuário Não Encontrada"
+      ], 404);
+    }
+
+    $user->name = $data['name'];
+    $user->email = $data['email'];
+    $user->password = Hash::make($data['password']);
+    $user->sociedade = $data['sociedade'];
+    $user->save();
+
+    return response()->json($data);
+  }
+
+  /**
+   * Remove the specified resource from storage.
+   *
+   * @param  int  $id
+   * @return \Illuminate\Http\Response
+   */
+  public function delete(Request $request, $id)
+  {
+    $sociedadesUsuario = $request->all()['user']['sociedade'];
+
+    if (!in_array('administrador', $sociedadesUsuario)) {
+      return response()->json([
+        "Você não tem acesso aqui"
+      ], 401);
+    }
+
+
+    $user = User::where('userId', $id)->first();
+
+    if (!$user) {
+      return response()->json([
+        "Usuário Não Encontrada"
+      ], 404);
+    }
+
+    User::where('userId', $id)->delete();
+
+    return  response()->json([
+      'message' => 'Excluida com Sucesso',
+      'sociedade' => $user,
+    ]);
+
+  }
 }

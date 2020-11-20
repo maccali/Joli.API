@@ -22,7 +22,7 @@ class AuditMiddleware
 
         $time = new DateTime();
         $status = $response->getStatusCode();
-        $user = $request->user;
+        $operator = $request->user;
 
         $requestFiltered = [
           'url' => $request->url(),
@@ -39,9 +39,10 @@ class AuditMiddleware
 
         $requestFiltered = json_encode($requestFiltered);
         $responseFiltered = json_encode($responseFiltered);
+        $operator = json_encode($operator);
 
-        DB::insert('insert into audit_histories(time,status, user, request, response)
-                    values( ?, ?, ?, ?, ?)', [$time, $status, $user, $requestFiltered, $responseFiltered]);
+        \DB::insert('insert into audit_histories(time, status, operator, request, response)
+                    values( ?, ?, ?, ?, ?)', [$time, $status, $operator, $requestFiltered, $responseFiltered]);
 
         return $response;
     }
