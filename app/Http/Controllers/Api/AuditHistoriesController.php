@@ -36,6 +36,8 @@ class AuditHistoriesController extends Controller
       $erroLog->paginate(10);
     }
 
-    return response()->json($erroLog->orderBy('auditHistoryId','desc')->get(), 200);
+    $tratadorErro = $erroLog->orderBy('auditHistoryId', 'desc')->get();
+
+    return response()->json($tratadorErro, 200);
   }
 }
