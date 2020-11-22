@@ -30,6 +30,12 @@ class AuditHistoriesController extends Controller
       $erroLog->whereJsonContains('operator', ['email' => $data['email']]);
     }
 
-    return response()->json([$erroLog->get()], 200);
+    if (isset($data['limit'])) {
+      $erroLog->paginate($data['limit']);
+    } else {
+      $erroLog->paginate(10);
+    }
+
+    return response()->json($erroLog->orderBy('auditHistoryId','desc')->get(), 200);
   }
 }
