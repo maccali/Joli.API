@@ -2,10 +2,11 @@
 
 namespace App\Exceptions;
 
-use App\Models\ErroLog;
+use App\Console\Apoio;
 use DateTime;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Support\Facades\DB;
 
 class Handler extends ExceptionHandler
 {
@@ -46,7 +47,14 @@ class Handler extends ExceptionHandler
         // $erro['log'] = $exception->gettype;
         // $erro['error'] = $exception->getMessage();
         // $erro->save();
-
+        /*
+        DB::table('pessoa')->insert(
+            ['time' => Apoio::getTimestamp(), 
+             'log' => $exception->getFile() . ', ' . $exception->getLine() . ', ' . $exception->getMessage(),
+             'error' => $exception->getCode(),
+            ['codigo']]
+        );
+*/
         parent::report($exception);
     }
 
