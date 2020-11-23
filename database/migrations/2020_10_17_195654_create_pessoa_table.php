@@ -19,7 +19,7 @@ class CreatePessoaTable extends Migration
       $table->string('email', 150);
       $table->string('endereco', 150);
       $table->string('telefone', 15);
-      $table->string('cep', 8);
+      $table->string('cep', 15);
       $table->string('cidade', 250);
       $table->string('uf', 2);
 
@@ -31,7 +31,7 @@ class CreatePessoaTable extends Migration
 
       $table->string('cnpj', 18)->nullable();
       $table->string('natureza_jur', 150)->nullable();
-      $table->string('cnae', 9)->nullable();
+      $table->string('cnae', 15)->nullable();
       $table->date('abertura', 15)->nullable();
 
       $table->timestamps();
