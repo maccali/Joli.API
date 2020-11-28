@@ -10,6 +10,9 @@ use App\Models\PessoaJuridica;
 use App\Models\Pessoa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendMailPessoa;
+
 
 class PessoaController extends Controller
 {
@@ -62,110 +65,121 @@ class PessoaController extends Controller
 
     $pessoa = Pessoa::create($pessoaDados);
 
+
+
+    // Mail::to($to)->send(new SendMailUser());
+
+    // Mail::to('to@email.com')
+    //   ->cc('copy@email.com')
+    //   ->send(new SendMailPessoa());
+
+
+    Mail::to('smtppictu@gmail.com')->send(new SendMailPessoa($pessoa));
+
     return $pessoa;
 
 
-    if ($fields['tipo'] == "FISICA") {
-      $pessoap = [
-        "nome" => $fields['nome'],
-        "email" => $fields['email'],
-        "endereco" => $fields['endereco'],
-        "telefone" => $fields['telefone'],
-        "cep" => $fields['cep'],
-        "cidade" => $fields['cidade'],
-        "uf" => $fields['uf']
-      ];
-      $ar = array_values($pessoap);
+    // if ($fields['tipo'] == "FISICA") {
+    //   $pessoap = [
+    //     "nome" => $fields['nome'],
+    //     "email" => $fields['email'],
+    //     "endereco" => $fields['endereco'],
+    //     "telefone" => $fields['telefone'],
+    //     "cep" => $fields['cep'],
+    //     "cidade" => $fields['cidade'],
+    //     "uf" => $fields['uf']
+    //   ];
+    //   $ar = array_values($pessoap);
 
-      $insPes = DB::table('pessoa')->insert(
-        [
-          'nome' => $ar[0], 'email' => $ar[1],
-          'endereco' => $ar[2], 'telefone' => $ar[3],
-          'cep' => $ar[4], 'cidade' => $ar[5], 'uf' => $ar[6]
-        ],
-        ['codigo']
-      );
+    //   $insPes = DB::table('pessoa')->insert(
+    //     [
+    //       'nome' => $ar[0], 'email' => $ar[1],
+    //       'endereco' => $ar[2], 'telefone' => $ar[3],
+    //       'cep' => $ar[4], 'cidade' => $ar[5], 'uf' => $ar[6]
+    //     ],
+    //     ['codigo']
+    //   );
 
-      $id = array_values(DB::select('select max(codigo) from pessoa'));
-      $idc = $id[0];
-      $idx = array_values(get_object_vars($idc));
-      $idz = strval($idx[0]);
+    //   $id = array_values(DB::select('select max(codigo) from pessoa'));
+    //   $idc = $id[0];
+    //   $idx = array_values(get_object_vars($idc));
+    //   $idz = strval($idx[0]);
 
-      $pessoaf = new PessoaFisica;
-      $pessoaf = [
-        "cod_pessoa" => $idz, "cpf" => $pessoa['cpf'],
-        "rg" => $pessoa['rg'], "nascimento" => $pessoa['nascimento']
-      ];
-      $ar = array_values($pessoaf);
+    //   $pessoaf = new PessoaFisica;
+    //   $pessoaf = [
+    //     "cod_pessoa" => $idz, "cpf" => $pessoa['cpf'],
+    //     "rg" => $pessoa['rg'], "nascimento" => $pessoa['nascimento']
+    //   ];
+    //   $ar = array_values($pessoaf);
 
-      $insFis = DB::table('fisica')->insert(
-        [
-          'cod_pessoa' => $ar[0], 'cpf' => $ar[1],
-          'rg' => $ar[2], 'nascimento' => $ar[3]
-        ],
-        ['cod_pessoa']
-      );
+    //   $insFis = DB::table('fisica')->insert(
+    //     [
+    //       'cod_pessoa' => $ar[0], 'cpf' => $ar[1],
+    //       'rg' => $ar[2], 'nascimento' => $ar[3]
+    //     ],
+    //     ['cod_pessoa']
+    //   );
 
-      $pessoac = new Cliente;
-      $pessoac = ["cod_juridica" => 0, "cod_fisica" => $idz];
-      $ar = array_values($pessoac);
+    //   $pessoac = new Cliente;
+    //   $pessoac = ["cod_juridica" => 0, "cod_fisica" => $idz];
+    //   $ar = array_values($pessoac);
 
-      $insCli = DB::table('cliente')->insert(
-        ['cod_juridica' => $ar[0], 'cod_fisica' => $ar[1]],
-        ['codigo']
-      );
-    } else if ($pessoa['tipo'] == "JURIDICA") {
-      $pessoa = new Pessoa;
-      $pessoa = $request->all();
-      $pessoap = [
-        "nome" => $pessoa['nome'], "email" => $pessoa['email'],
-        "endereco" => $pessoa['endereco'], $pessoa['telefone'],
-        "cep" => $pessoa['cep'], "cidade" => $pessoa['cidade'],
-        "uf" => $pessoa['uf']
-      ];
-      $ar = array_values($pessoap);
+    //   $insCli = DB::table('cliente')->insert(
+    //     ['cod_juridica' => $ar[0], 'cod_fisica' => $ar[1]],
+    //     ['codigo']
+    //   );
+    // } else if ($pessoa['tipo'] == "JURIDICA") {
+    //   $pessoa = new Pessoa;
+    //   $pessoa = $request->all();
+    //   $pessoap = [
+    //     "nome" => $pessoa['nome'], "email" => $pessoa['email'],
+    //     "endereco" => $pessoa['endereco'], $pessoa['telefone'],
+    //     "cep" => $pessoa['cep'], "cidade" => $pessoa['cidade'],
+    //     "uf" => $pessoa['uf']
+    //   ];
+    //   $ar = array_values($pessoap);
 
-      $insPes = DB::table('pessoa')->insert(
-        [
-          'nome' => $ar[0], 'email' => $ar[1],
-          'endereco' => $ar[2], 'telefone' => $ar[3],
-          'cep' => $ar[4], 'cidade' => $ar[5], 'uf' => $ar[6]
-        ],
-        ['codigo']
-      );
+    //   $insPes = DB::table('pessoa')->insert(
+    //     [
+    //       'nome' => $ar[0], 'email' => $ar[1],
+    //       'endereco' => $ar[2], 'telefone' => $ar[3],
+    //       'cep' => $ar[4], 'cidade' => $ar[5], 'uf' => $ar[6]
+    //     ],
+    //     ['codigo']
+    //   );
 
-      $id = array_values(DB::select('select max(codigo) from pessoa'));
-      $idc = $id[0];
-      $idx = array_values(get_object_vars($idc));
-      $idz = strval($idx[0]);
+    //   $id = array_values(DB::select('select max(codigo) from pessoa'));
+    //   $idc = $id[0];
+    //   $idx = array_values(get_object_vars($idc));
+    //   $idz = strval($idx[0]);
 
-      $pessoaj = new PessoaJuridica;
-      $pessoaj = [
-        "cod_pessoa" => $idz, "cnpj" => $pessoa['cnpj'],
-        "cnae" => $pessoa['cnae'], "abertura" => $pessoa['abertura'],
-        "natureza_jur" => $pessoa['natureza_jur']
-      ];
-      $ar = array_values($pessoaj);
+    //   $pessoaj = new PessoaJuridica;
+    //   $pessoaj = [
+    //     "cod_pessoa" => $idz, "cnpj" => $pessoa['cnpj'],
+    //     "cnae" => $pessoa['cnae'], "abertura" => $pessoa['abertura'],
+    //     "natureza_jur" => $pessoa['natureza_jur']
+    //   ];
+    //   $ar = array_values($pessoaj);
 
-      $insFis = DB::table('fisica')->insert(
-        [
-          'cod_pessoa' => $ar[0], 'cpf' => $ar[1],
-          'rg' => $ar[2], 'nascimento' => $ar[3]
-        ],
-        ['cod_pessoa']
-      );
+    //   $insFis = DB::table('fisica')->insert(
+    //     [
+    //       'cod_pessoa' => $ar[0], 'cpf' => $ar[1],
+    //       'rg' => $ar[2], 'nascimento' => $ar[3]
+    //     ],
+    //     ['cod_pessoa']
+    //   );
 
-      $pessoac = new Cliente;
-      $pessoac = ["cod_juridica" => $idz, "cod_fisica" => 0];
-      $ar = array_values($pessoac);
+    //   $pessoac = new Cliente;
+    //   $pessoac = ["cod_juridica" => $idz, "cod_fisica" => 0];
+    //   $ar = array_values($pessoac);
 
-      $insCli = DB::table('cliente')->insert(
-        ['cod_juridica' => $ar[0], 'cod_fisica' => $ar[1]],
-        ['codigo']
-      );
-    }
+    //   $insCli = DB::table('cliente')->insert(
+    //     ['cod_juridica' => $ar[0], 'cod_fisica' => $ar[1]],
+    //     ['codigo']
+    //   );
+    // }
 
-    return response()->json([$insPes, $insFis, $insCli]);
+    // return response()->json([$insPes, $insFis, $insCli]);
   }
 
   public function update(Request $request, $id)
