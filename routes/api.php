@@ -66,6 +66,14 @@ Route::group(['middleware' => ['audit', 'apiJwt']], function () {
   // Route::delete('pessoa/fisica/cliente/{id}', 'Api\PessoaController@destroyFisicaCliente');
   // Route::delete('pessoa/juridica/cliente/{id}', 'Api\PessoaController@destroyJuridicaCliente');
   // Route::delete('pessoa/fisica/funcionario/{id}', 'Api\PessoaController@destroyFisicaFuncionario');
+
+  // PROCESSOS
+  Route::get('processos', 'Api\ProcessoController@index');
+  Route::post('processo', 'Api\ProcessoController@store');
+  Route::get('processo/{id}', 'Api\ProcessoController@show');
+  Route::post('processo/up', 'Api\ProcessoController@update');
+  Route::delete('processos/{id}', 'Api\ProcessoController@destroy');
+
 });
 
 Route::group(['middleware' => ['audit']], function () {

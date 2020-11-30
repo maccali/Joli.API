@@ -65,8 +65,6 @@ class PessoaController extends Controller
 
     $pessoa = Pessoa::create($pessoaDados);
 
-
-
     Mail::to('smtppictu@gmail.com')->send(new SendMailPessoa($pessoa));
 
     return $pessoa;
