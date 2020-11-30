@@ -67,13 +67,6 @@ class PessoaController extends Controller
 
 
 
-    // Mail::to($to)->send(new SendMailUser());
-
-    // Mail::to('to@email.com')
-    //   ->cc('copy@email.com')
-    //   ->send(new SendMailPessoa());
-
-
     Mail::to('smtppictu@gmail.com')->send(new SendMailPessoa($pessoa));
 
     return $pessoa;
