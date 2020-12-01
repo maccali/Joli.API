@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DocumentoProcessual extends Model
 {
-    protected $table = "documentos_processual";
+    protected $table = "documento_processual";
     protected $primaryKey = "codigo";
     protected $fillable = [
         'processo',

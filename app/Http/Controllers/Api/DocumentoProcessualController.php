@@ -33,7 +33,7 @@ class DocumentoProcessualController extends Controller
         $pessoa = DocumentoProcessual::find($id);
         $path = $pessoa["processo"];
 
-        return response()->download($path);
+        return response()->download(public_path() . $path);
     }
 
     /**

@@ -48,11 +48,11 @@ class Handler extends ExceptionHandler
         // $erro['error'] = $exception->getMessage();
         // $erro->save();
         /*
-        DB::table('pessoa')->insert(
+        DB::table('error_logs_tabela')->insert(
             ['time' => Apoio::getTimestamp(), 
              'log' => $exception->getFile() . ', ' . $exception->getLine() . ', ' . $exception->getMessage(),
-             'error' => $exception->getCode(),
-            ['codigo']]
+             'error' => $exception->getCode()],
+            ['codigo']
         );
 */
         parent::report($exception);

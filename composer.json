@@ -14,6 +14,7 @@
         "guzzlehttp/guzzle": "^6.3",
         "laravel/framework": "^7.0",
         "laravel/tinker": "^2.0",
+        "league/csv": "9.0",
         "league/flysystem": "^1.1",
         "league/mime-type-detection": "^1.5",
         "symfony/orm-pack": "^2.0",

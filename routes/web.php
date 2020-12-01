@@ -18,6 +18,8 @@ Route::get('/', function () {
 });
 
 //GET ROUTES FOR CONTROLLERS
+Route::get('csv','Api\csvGeneratorController@index');
+Route::get('csv/cliente','Api\csvGeneratorController@clienteCsv');
 Route::get('pessoa','Api\PessoaController@index');
 Route::get('pessoa/{id}','Api\PessoaController@show');
 Route::get('pessoa/{nome}','Api\PessoaController@showName');
