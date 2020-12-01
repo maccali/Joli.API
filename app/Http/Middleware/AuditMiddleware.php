@@ -42,7 +42,7 @@ class AuditMiddleware
         $operator = json_encode($operator);
 
         \DB::insert('insert into audit_histories(time, status, operator, request, response)
-                    values( ?, ?, ?, ?, ?)', [$time, $status, $operator, $requestFiltered, $responseFiltered]);
+                    values( ?, ?, ?, ?, ?)', [$time, $status, $operator, $requestFiltered, null]);
 
         return $response;
     }

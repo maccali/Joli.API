@@ -6,28 +6,28 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateErrorLogsTabela extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        Schema::create('error_logs_tabela', function (Blueprint $table) {
-            $table->increments('codigo');
-            $table->timestamp('time', 0);
-			$table->string('log', 250);
-			$table->string('error', 50);
-        });
-    }
+  /**
+   * Run the migrations.
+   *
+   * @return void
+   */
+  public function up()
+  {
+    Schema::create('error_logs_tabela', function (Blueprint $table) {
+      $table->increments('codigo');
+      $table->timestamp('time', 0);
+      $table->string('log', 250);
+      $table->string('error', 50);
+    });
+  }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('error_logs_tabela');
-    }
+  /**
+   * Reverse the migrations.
+   *
+   * @return void
+   */
+  public function down()
+  {
+    Schema::dropIfExists('error_logs_tabela');
+  }
 }

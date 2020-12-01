@@ -6,30 +6,30 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateProcessoTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        Schema::create('processo', function (Blueprint $table) {
-            $table->increments('codigo');
-            $table->integer('cod_cliente')->references('codigo')->on('cliente');
-			$table->integer('cod_funcionario')->references('codigo')->on('funcionario');
-			$table->string('numero', 50);
-			$table->string('processo_tipo', 100);
-			$table->date('abertura');
-        });
-    }
+  /**
+   * Run the migrations.
+   *
+   * @return void
+   */
+  public function up()
+  {
+    Schema::create('processo', function (Blueprint $table) {
+      $table->increments('codigo');
+      $table->integer('cod_cliente')->references('codigo')->on('cliente');
+      $table->integer('cod_funcionario')->references('codigo')->on('funcionario');
+      $table->string('numero', 50);
+      $table->string('processo_tipo', 100);
+      $table->date('abertura');
+    });
+  }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('processo');
-    }
+  /**
+   * Reverse the migrations.
+   *
+   * @return void
+   */
+  public function down()
+  {
+    Schema::dropIfExists('processo');
+  }
 }
