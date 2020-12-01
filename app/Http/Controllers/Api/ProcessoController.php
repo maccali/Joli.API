@@ -5,9 +5,13 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Processo;
+use App\Models\User;
+use App\Models\Pessoa;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendEmailProcesso;
 
 class ProcessoController extends Controller
 {
@@ -124,8 +128,17 @@ class ProcessoController extends Controller
     ];
 
     $processo = Processo::create($processoDados);
+    $user = User::where('userId', $fields['user']['userId'])->first();
+    $pessoa = Pessoa::where('codigo', $fields['cod_cliente'])->first();
 
-    return response()->json($processo);
+    Mail::to('smtppictu@gmail.com')->send(new SendEmailProcesso($user, $processo, $pessoa));
+
+    return response()->json([
+      'processo' => $processo,
+      'criador' => $user,
+      'cliente' => $pessoa,
+    ]);
+
   }
 
   /**
