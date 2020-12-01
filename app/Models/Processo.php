@@ -13,6 +13,8 @@ class Processo extends Model
     'cod_funcionario',
     'cod_processo',
     'numero',
+    'documento',
+    'documento_processual',
     'processo_tipo',
     'abertura',
   ];

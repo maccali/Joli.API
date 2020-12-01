@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Processo;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class ProcessoController extends Controller
 {
@@ -102,16 +103,23 @@ class ProcessoController extends Controller
 
     $fields = $request->all();
 
+    $hash =  strtoupper(Str::random(7));
+
+    $fileDocumento = $request->file('documento');
+    $fileDocumentoProcessual = $request->file('documento_processual');
+
+    $storeDocumento = Storage::disk('public')->put($hash, $fileDocumento);
+    $storeDocumentoProcessual = Storage::disk('public')->put($hash, $fileDocumentoProcessual);
 
     $processoDados = [
       "cod_cliente" => $fields['cod_cliente'],
       "cod_funcionario" => $fields['user']['userId'],
-      "cod_processo" => strtoupper(Str::random(7)),
+      "cod_processo" => $hash,
       "numero" => $fields['numero'],
       "processo_tipo" => $fields['processo_tipo'],
       "abertura" => $fields['abertura'],
-      "documento" => $fields['documento'],
-      "documento_processual" => $fields['documento_processual'],
+      "documento" => "/storage/" . $storeDocumento,
+      "documento_processual" => "/storage/" . $storeDocumentoProcessual,
 
     ];
 

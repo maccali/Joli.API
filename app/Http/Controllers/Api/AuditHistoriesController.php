@@ -30,11 +30,18 @@ class AuditHistoriesController extends Controller
       $erroLog->whereJsonContains('operator', ['email' => $data['email']]);
     }
 
-    if (isset($data['limit'])) {
-      $erroLog->paginate($data['limit']);
+
+    if (isset($data['csv'])) {
+      $erroLog->orderBy('auditHistoryId', 'desc')->get();
+      return response()->download($erroLog, 'output.csv');
     } else {
-      $erroLog->paginate(10);
+      if (isset($data['limit'])) {
+        $erroLog->paginate($data['limit']);
+      } else {
+        $erroLog->paginate(10);
+      }
     }
+
 
     $tratadorErro = $erroLog->orderBy('auditHistoryId', 'desc')->get();
 

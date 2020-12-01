@@ -19,6 +19,8 @@ class CreateProcessoTable extends Migration
       $table->integer('cod_funcionario')->references('codigo')->on('funcionario');
       $table->string('cod_processo', 7);
       $table->string('numero', 50);
+      $table->string('documento', 250);
+      $table->string('documento_processual', 250);
       $table->string('processo_tipo', 100);
       $table->date('abertura');
       $table->timestamps();

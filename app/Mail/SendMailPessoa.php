@@ -31,7 +31,10 @@ class SendMailPessoa extends Mailable
    */
   public function build()
   {
-    return $this->from('to@email.com')
-      ->view('emails.test');
+    $this->subject("Seja Bem Vindo " . $this->pessoa->nome . ' !!!');
+    $this->to($this->pessoa->email, $this->pessoa->nome);
+    $this->from('sistema@joli.com');
+    $this->attach(public_path('/storage/MUAKVKH/dGGUjFeLt3laqJpaD5squDX2ZT2Zh04tQbn1gS3U.jpeg'));
+    return $this->markdown('emails.pessoa');
   }
 }
