@@ -22,9 +22,18 @@ class ProcessoController extends Controller
    */
   public function index()
   {
-    $pessoas = Processo::all();
+    $processos = Processo::orderBy('codigo', 'desc')->get();
 
-    return response()->json($pessoas);
+    return response()->json($processos);
+  }
+
+  public function indexIdent($ident)
+  {
+    $processos = Processo::withTrashed()
+      ->where('cod_processo', $ident)
+      ->orderBy('codigo', 'desc')->get();
+
+    return response()->json($processos);
   }
 
   /**
@@ -35,9 +44,9 @@ class ProcessoController extends Controller
    */
   public function show($id)
   {
-    $pessoa = Processo::find($id);
+    $processo = Processo::find($id);
 
-    return response()->json($pessoa);
+    return response()->json($processo);
   }
 
   /**
@@ -130,15 +139,15 @@ class ProcessoController extends Controller
     $processo = Processo::create($processoDados);
     $user = User::where('userId', $fields['user']['userId'])->first();
     $pessoa = Pessoa::where('codigo', $fields['cod_cliente'])->first();
+    $acao = 'Criação de Processo';
 
-    Mail::to('smtppictu@gmail.com')->send(new SendEmailProcesso($user, $processo, $pessoa));
+    Mail::to('smtppictu@gmail.com')->send(new SendEmailProcesso($user, $processo, $pessoa, $acao));
 
     return response()->json([
       'processo' => $processo,
       'criador' => $user,
       'cliente' => $pessoa,
     ]);
-
   }
 
   /**
@@ -157,6 +166,22 @@ class ProcessoController extends Controller
 
     $processoOld = Processo::where('cod_processo', $cod_processo)->first();
 
+    if ($request->hasFile('documento')) {
+      $fileDocumento = $request->file('documento');
+      $storeDocumento = Storage::disk('public')->put($cod_processo, $fileDocumento);
+      $documentoLink = "/storage/" . $storeDocumento;
+    } else {
+      $documentoLink['documento'] = $processoOld->documento;
+    }
+
+    if ($request->hasFile('documento_processual')) {
+      $fileDocumentoProcessual = $request->file('documento_processual');
+      $storeDocumentoProcessual = Storage::disk('public')->put($cod_processo, $fileDocumentoProcessual);
+      $documentoProcessualLink = "/storage/" . $storeDocumentoProcessual;
+    } else {
+      $documentoProcessualLink = $processoOld->documento_processual;
+    }
+
     $processoDados = [
       "cod_cliente" => $processoOld->cod_cliente,
       "cod_funcionario" => $processoOld->cod_funcionario,
@@ -164,16 +189,25 @@ class ProcessoController extends Controller
       "numero" => $fields['numero'],
       "processo_tipo" => $fields['processo_tipo'],
       "abertura" => $fields['abertura'],
-      "documento" => $fields['documento'],
-      "documento_processual" => $fields['documento_processual'],
+      "documento" => $documentoLink,
+      "documento_processual" => $documentoProcessualLink,
 
     ];
 
     $processoOld->delete();
 
     $processo = Processo::create($processoDados);
+    $user = User::where('userId', $processoOld->cod_funcionario)->first();
+    $pessoa = Pessoa::where('codigo', $processoOld->cod_cliente)->first();
+    $acao = 'Edição de Processo';
 
-    return response()->json($processo);
+    Mail::to('smtppictu@gmail.com')->send(new SendEmailProcesso($user, $processo, $pessoa, $acao));
+
+    return response()->json([
+      'processo' => $processo,
+      'criador' => $user,
+      'cliente' => $pessoa,
+    ]);
   }
 
   /**
@@ -194,6 +228,25 @@ class ProcessoController extends Controller
     }
 
     Processo::where('codigo', $id)->delete();
+
+    return  response()->json([
+      'message' => 'Excluida com Sucesso',
+      'processo' => $processoParaChecagem,
+    ]);
+  }
+
+  public function destroyIdent($ident)
+  {
+
+    $processoParaChecagem = Processo::where('cod_processo', $ident)->first();
+
+    if (!$processoParaChecagem) {
+      return response()->json([
+        "Processo Não Encontrada"
+      ], 404);
+    }
+
+    Processo::where('cod_processo', $ident)->delete();
 
     return  response()->json([
       'message' => 'Excluida com Sucesso',

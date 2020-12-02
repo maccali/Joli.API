@@ -16,6 +16,7 @@ class SendEmailProcesso extends Mailable
   public $user;
   public $processo;
   public $pessoa;
+  public $acao;
 
 
   /**
@@ -23,11 +24,12 @@ class SendEmailProcesso extends Mailable
    *
    * @return void
    */
-  public function __construct(User $user, Processo $processo, Pessoa $pessoa)
+  public function __construct(User $user, Processo $processo, Pessoa $pessoa, String $acao)
   {
     $this->user = $user;
     $this->processo = $processo;
     $this->pessoa = $pessoa;
+    $this->acao = $acao;
   }
 
   /**

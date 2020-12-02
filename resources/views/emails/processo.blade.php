@@ -1,6 +1,7 @@
 @component('mail::message')
 
-<h1>Olá,temos uma Movimentação do processo {{$processo->cod_processo}}</h1  >
+<h1>Olá,temos uma Movimentação do processo {{$processo->cod_processo}}</h1>
+<h2><b>Acão: </b> {{$acao}}</h2>
 <br/>
 <div><b>Nome do Funcionário: </b><span>{{ $user->name }}</span></div>
 <div><b>Nome do Cliente: </b><span>{{ $pessoa->nome }}</span></div>

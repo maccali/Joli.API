@@ -57,23 +57,16 @@ Route::group(['middleware' => ['audit', 'apiJwt']], function () {
   Route::get('pessoa/{nome}', 'Api\PessoaController@showName');
   Route::put('pessoa/{id}', 'Api\PessoaController@update');
   Route::delete('pessoa/{id}', 'Api\PessoaController@destroy');
-  // Route::post('pessoa/fisica/cliente', 'Api\PessoaController@storeFisicaCliente');
-  // Route::post('pessoa/juridica/cliente', 'Api\PessoaController@storeJuridicaCliente');
-  // Route::post('pessoa/fisica/funcionario', 'Api\PessoaController@storeFisicaFuncionario');
-  // Route::put('pessoa/fisica/cliente/{id}', 'Api\PessoaController@updateFisicaCliente');
-  // Route::put('pessoa/juridica/cliente/{id}', 'Api\PessoaController@updateJuridicaCliente');
-  // Route::put('pessoa/fisica/funcionario/{id}', 'Api\PessoaController@updateFisicaFuncionario');
-  // Route::delete('pessoa/fisica/cliente/{id}', 'Api\PessoaController@destroyFisicaCliente');
-  // Route::delete('pessoa/juridica/cliente/{id}', 'Api\PessoaController@destroyJuridicaCliente');
-  // Route::delete('pessoa/fisica/funcionario/{id}', 'Api\PessoaController@destroyFisicaFuncionario');
 
   // PROCESSOS
   Route::get('processos', 'Api\ProcessoController@index');
+  Route::get('processos/history/{ident}', 'Api\ProcessoController@indexIdent');
   Route::post('processo', 'Api\ProcessoController@store');
   Route::get('processo/{id}', 'Api\ProcessoController@show');
+  Route::get('processo/identidade/{ident}', 'Api\ProcessoController@showIdent');
   Route::post('processo/up', 'Api\ProcessoController@update');
   Route::delete('processos/{id}', 'Api\ProcessoController@destroy');
-
+  Route::delete('processos/identidade/{ident}', 'Api\ProcessoController@destroyIdent');
 });
 
 Route::group(['middleware' => ['audit']], function () {
