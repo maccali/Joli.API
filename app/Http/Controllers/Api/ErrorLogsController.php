@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ErroLog;
 use Illuminate\Support\Facades\DB;
+use League\Csv\Writer;
 
 class ErrorLogsController extends Controller
 {
@@ -14,8 +15,18 @@ class ErrorLogsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(){
+    public function index(Request $request){
         $pessoas = ErroLog::all();
+
+        if($request->csv == 'TRUE'){
+            $ac = array_values((array)$pessoas)[0];
+            $path = public_path() . '/tes.csv';
+            $writer = Writer::createFromPath($path, 'w+');
+            $writer->insertOne(['codigo', 'hora', 'log', 'errro']);
+            $writer->insertAll($ac);
+
+            return response()->download($path);
+        }
 
         return response()->json($pessoas);
     }
@@ -26,9 +37,19 @@ class ErrorLogsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $pessoa = ErroLog::find($id);
+
+        if($request->csv == 'TRUE'){
+            $ac = array_values((array)$pessoa)[0];
+            $path = public_path() . '/tes.csv';
+            $writer = Writer::createFromPath($path, 'w+');
+            $writer->insertOne(['codigo', 'hora', 'log', 'errro']);
+            $writer->insertAll($ac);
+
+            return response()->download($path);
+        }
 
         return response()->json($pessoa);
     }
@@ -39,10 +60,19 @@ class ErrorLogsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function showDate($date)
+    public function showDate(Request $request, $date)
     {
         $pessoa = DB::select('select * from error_logs_tabela 
                               where time = ?', [$date]);
+        if($request->csv == 'TRUE'){
+            $ac = array_values((array)$pessoa)[0];
+            $path = public_path() . '/tes.csv';
+            $writer = Writer::createFromPath($path, 'w+');
+            $writer->insertOne(['codigo', 'hora', 'log', 'errro']);
+            $writer->insertAll($ac);
+
+            return response()->download($path);
+        }
 
         return response()->json($pessoa);
     }

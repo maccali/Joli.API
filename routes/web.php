@@ -20,9 +20,9 @@ Route::get('/', function () {
 //GET ROUTES FOR CONTROLLERS
 Route::get('csv','Api\csvGeneratorController@index');
 Route::get('csv/cliente','Api\csvGeneratorController@clienteCsv');
-Route::get('pessoa','Api\PessoaController@index');
+//Route::get('pessoa','Api\PessoaController@index');
 Route::get('pessoa/{id}','Api\PessoaController@show');
-Route::get('pessoa/{nome}','Api\PessoaController@showName');
+Route::get('pessoa','Api\PessoaController@showName');
 Route::get('fisica','Api\PessoaFisicaController@index');
 Route::get('fisica/{id}','Api\PessoaFisicaController@show');
 Route::get('fisica/{name}','Api\PessoaFisicaController@showName');

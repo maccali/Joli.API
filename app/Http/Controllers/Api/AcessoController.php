@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use League\Csv\Writer;
 
 class AcessoController extends Controller
 {
@@ -17,8 +18,17 @@ class AcessoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(){
+    public function index(Request $request){
         $pessoas = Acesso::all();
+        if($request->csv == 'TRUE'){
+            $ac = array_values((array)$pessoas)[0];
+            $path = public_path() . '/tes.csv';
+            $writer = Writer::createFromPath($path, 'w+');
+            $writer->insertOne(['codigo', 'hora', 'ip', 'feito', 'funcionario']);
+            $writer->insertAll($ac);
+
+            return response()->download($path);
+        }
 
         return response()->json($pessoas);
     }
@@ -29,9 +39,18 @@ class AcessoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $pessoa = Acesso::find($id);
+        if($request->csv == 'TRUE'){
+            $ac = array_values((array)$pessoa)[0];
+            $path = public_path() . '/tes.csv';
+            $writer = Writer::createFromPath($path, 'w+');
+            $writer->insertOne(['codigo', 'hora', 'ip', 'feito', 'funcionario']);
+            $writer->insertAll($ac);
+
+            return response()->download($path);
+        }
 
         return response()->json($pessoa);
     }
@@ -42,10 +61,19 @@ class AcessoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function showIdFuncionario($id)
+    public function showIdFuncionario(Request $request, $id)
     {
         $pessoa = DB::select('select * from acessos 
                               where funcionarioId = ?', [$id]);
+        if($request->csv == 'TRUE'){
+            $ac = array_values((array)$pessoa)[0];
+            $path = public_path() . '/tes.csv';
+            $writer = Writer::createFromPath($path, 'w+');
+            $writer->insertOne(['codigo', 'hora', 'ip', 'feito', 'funcionario']);
+            $writer->insertAll($ac);
+
+            return response()->download($path);
+        }
 
         return response()->json($pessoa);
     }
@@ -56,10 +84,19 @@ class AcessoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function showDate($date)
+    public function showDate(Request $request, $date)
     {
         $pessoa = DB::select('select * from acessos 
                               where time = ?', [$date]);
+        if($request->csv == 'TRUE'){
+            $ac = array_values((array)$pessoa)[0];
+            $path = public_path() . '/tes.csv';
+            $writer = Writer::createFromPath($path, 'w+');
+            $writer->insertOne(['codigo', 'hora', 'ip', 'feito', 'funcionario']);
+            $writer->insertAll($ac);
+
+            return response()->download($path);
+        }
 
         return response()->json($pessoa);
     }

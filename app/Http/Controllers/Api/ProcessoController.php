@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Processo;
 use Illuminate\Support\Facades\DB;
+use League\Csv\Writer;
 
 class ProcessoController extends Controller
 {
@@ -26,10 +27,21 @@ class ProcessoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $pessoa = Processo::find($id);
 
+        if($request->csv == 'TRUE'){
+            $ac = array_values((array)$pessoa)[0];
+            $path = public_path() . '/tes.csv';
+            $writer = Writer::createFromPath($path, 'w+');
+            $writer->insertOne(['codigo', 'cliente', 'funcionario', 'numero', 
+                                'tipo', 'abertura']);
+            $writer->insertAll($ac);
+            return response()->download($path);
+        }
+        
+
         return response()->json($pessoa);
     }
 
@@ -39,10 +51,19 @@ class ProcessoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function showIdFuncionario($id)
+    public function showIdFuncionario(Request $request, $id)
     {
         $pessoa = DB::select('select * from processo 
                               where cod_funcionario = ?', [$id]);
+        if($request->csv == 'TRUE'){
+            $ac = array_values((array)$pessoa)[0];
+            $path = public_path() . '/tes.csv';
+            $writer = Writer::createFromPath($path, 'w+');
+            $writer->insertOne(['codigo', 'cliente', 'funcionario', 'numero', 
+                                'tipo', 'abertura']);
+            $writer->insertAll($ac);
+            return response()->download($path);
+        }
 
         return response()->json($pessoa);
     }
@@ -53,10 +74,20 @@ class ProcessoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function showIdCliente($id)
+    public function showIdCliente(Request $request, $id)
     {
         $pessoa = DB::select('select * from processo 
                               where cod_cliente = ?', [$id]);
+
+        if($request->csv == 'TRUE'){
+            $ac = array_values((array)$pessoa)[0];
+            $path = public_path() . '/tes.csv';
+            $writer = Writer::createFromPath($path, 'w+');
+            $writer->insertOne(['codigo', 'cliente', 'funcionario', 'numero', 
+                                'tipo', 'abertura']);
+            $writer->insertAll($ac);
+            return response()->download($path);
+        }
 
         return response()->json($pessoa);
     }

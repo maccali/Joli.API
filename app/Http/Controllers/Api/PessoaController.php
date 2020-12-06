@@ -10,6 +10,7 @@ use App\Models\PessoaJuridica;
 use App\Models\Pessoa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use League\Csv\Writer;
 
 class PessoaController extends Controller
 {
@@ -17,6 +18,15 @@ class PessoaController extends Controller
   public function index(Request $request)
   {
     $pessoas = Pessoa::all();
+    if($request->csv == 'TRUE'){
+       $ac = array_values((array)$pessoas)[0];
+          $on = ['codigo', 'nome', 'email', 'telefone', 'cep', 'cidade', 'uf'];
+          $path = public_path() . '/tes.csv';
+          $writer = Writer::createFromPath($path, 'w+');
+          $writer->insertOne($on);
+          $writer->insertAll($ac);
+          return response()->download($path);
+    }
 
     return response()->json($pessoas);
   }
@@ -24,15 +34,95 @@ class PessoaController extends Controller
   public function show(Request $request, $id)
   {
     $pessoa = Pessoa::find($id);
+    $pessoaf = PessoaFisica::find($id);
+    $pessoaj = PessoaJuridica::find($id);
+    $resp = array();
+    
+    if($pessoaj = null) {
+      $resp = [$pessoa, $pessoaf];
+    } else {
+      $resp = [$pessoa, $pessoaj];
+    }
 
-    return response()->json($pessoa);
+    if($request->csv == 'TRUE'){
+        $ac = array_values((array)$pessoa)[0];
+        $ab = array();
+        $aa = array();
+        $on = [];
+        if($pessoaj = null) {
+          $aa = array_values((array)$pessoaf);
+          $on = ['nome', 'email', 'telefone', 'cidade', 'cpf', 'nascimento'];
+          for($i = 0; $i < sizeof($ac); $i++) {
+            array_push($ab, [$ac[$i]->nome, $ac[$i]->email, 
+            $ac[$i]->telefone, $ac[$i]->cidade, $aa[$i]->cpf, $aa[$i]->nascimento]);
+          }
+        } else {
+          $aa = array_values((array)$pessoaj);
+          $on = ['nome', 'email', 'telefone', 'cidade', 'cnpj', 'abertura'];
+          for($i = 0; $i < sizeof($ac); $i++) {
+            array_push($ab, [$ac[$i]->nome, $ac[$i]->email, 
+            $ac[$i]->telefone, $ac[$i]->cidade, $aa[$i]->cnpj, $aa[$i]->abertura]);
+          }
+        }
+        
+        $path = public_path() . '/tes.csv';
+        $writer = Writer::createFromPath($path, 'w+');
+        $writer->insertOne($on);
+        $writer->insertAll($ab);
+
+        return response()->download($path);
+    } else {
+      return response()->json($pessoa);
+    }
+
+    return response()->json([gettype($pessoa), gettype($pessoaf)]);
   }
 
-  public function showName(Request $request, $name)
+  public function showName(Request $request)
   {
-    $pessoa = DB::select('select * from pessoa where nome like ?', [$name]);
+    $pessoa = array();
+    $name = $request->nome;
+    if($request->tipo = 'FISICA'){
+      $pessoa = DB::select('select * from pessoa p, fisica f
+                            where p.codigo = f.cod_pessoa 
+                            and p.nome like ?', [$name]);
+    } else if($request->tipo = 'JURIDICA'){
+      $pessoa = DB::select('select * from pessoa p, juridica f
+                            where p.codigo = f.cod_pessoa 
+                            and p.nome like ?', [$name]);
+    }
 
-    return response()->json($pessoa);
+    if($request->csv == 'TRUE'){
+      $ac = array_values((array)$pessoa)[0];
+        $ab = array();
+        $aa = array();
+        $on = [];
+        if($request->tipo = 'FISICA') {
+          $aa = array_values((array)$pessoa);
+          $on = ['nome', 'email', 'telefone', 'cidade', 'cpf', 'nascimento'];
+          for($i = 0; $i < sizeof($ac); $i++) {
+            array_push($ab, [$ac[$i]->nome, $ac[$i]->email, 
+            $ac[$i]->telefone, $ac[$i]->cidade, $aa[$i]->cpf, $aa[$i]->nascimento]);
+          }
+        } else {
+          $aa = array_values((array)$pessoa);
+          $on = ['nome', 'email', 'telefone', 'cidade', 'cnpj', 'abertura'];
+          for($i = 0; $i < sizeof($ac); $i++) {
+            array_push($ab, [$ac[$i]->nome, $ac[$i]->email, 
+            $ac[$i]->telefone, $ac[$i]->cidade, $aa[$i]->cnpj, $aa[$i]->abertura]);
+          }
+        }
+        
+        $path = public_path() . '/tes.csv';
+        $writer = Writer::createFromPath($path, 'w+');
+        $writer->insertOne($on);
+        $writer->insertAll($ab);
+
+        return response()->download($path);
+    } else {
+      return response()->json($pessoa);
+    }
+    
   }
 
   public function store(Request $request)
